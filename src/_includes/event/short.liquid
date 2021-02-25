@@ -1,0 +1,5 @@
+<h2>{{ event.data.eventTitle }}</h2>
+<img src="{{ event.url }}images/main.jpg" alt="{{ event.data.eventTitle }}">
+<p>{{ event.data.description }}</p>
+<time class="archive__year" datetime="{{ event.date | date: "%d.%m.%Y" }}">{{ event.date | date: "%d.%m.%Y" }}</time>
+<a href="{{ event.url }}">details</a>

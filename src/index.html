@@ -1,0 +1,13 @@
+---
+layout: layout.liquid
+title: Свободный Театр Нектар
+---
+<h1>hey you!</h1>
+
+<ul>
+    {% for event in collections.events %}
+        <li>
+            {% include event/short.liquid %}
+        </li>
+    {% endfor %}
+</ul>
