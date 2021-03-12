@@ -2,5 +2,10 @@
     "apiKey": "",
     "apiUrl": "https://api.airtable.com",
     "ID": "",
-    "view": "Grid view"
+    "srcPerformancePath": "src/performances/",
+    "transliterationOptions": {
+        "trim": true,
+        "lowercase": true,
+        "separator": "_"
+    }
 }

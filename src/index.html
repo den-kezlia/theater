@@ -5,9 +5,9 @@ title: Свободный Театр Нектар
 <h1>hey you!</h1>
 
 <ul>
-    {% for event in collections.events %}
+    {% for performance in collections.performances %}
         <li>
-            {% include event/short.liquid %}
+            {% include performance/short.liquid %}
         </li>
     {% endfor %}
 </ul>

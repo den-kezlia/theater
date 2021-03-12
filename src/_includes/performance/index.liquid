@@ -1,0 +1,14 @@
+---
+layout: layout.liquid
+---
+<h1>{{ name }}</h1>
+<img src="images/main.jpg" alt="{{ name }}" />
+<p>{{ description }}</p>
+
+<ul>
+    {% for event in events %}
+        <li>
+            <time class="archive__year" datetime="{{ event.date | date: "%d.%m.%Y" }}">{{ event.date | date: "%d.%m.%Y" }}</time>
+        </li>
+    {% endfor %}
+</ul>
