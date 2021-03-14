@@ -3,16 +3,30 @@ layout: layout.liquid
 title: Свободный Театр Нектар
 ---
 
-<article class="performance">
-    
-</article>
+<div class="home">
+    <article class="performance">
+        go-gox
+    </article>
 
-<section class="performances">
-    <ul class="performance__list">
-        {% for performance in collections.performances %}
-            <li class="performance__item">
-                {% include performance/short.liquid %}
-            </li>
-        {% endfor %}
-    </ul>
-</section>
+    {% if collections.performances %}
+        <section
+            id="js-performances"
+            class="performances performances--collapsed"
+            data-items=""
+        >
+            <button
+                id="js-performances__toggle"
+                class="performances__toggle"
+                aria-label="Показать/Скрыть все выступления"
+            ></button>
+
+            <ul class="performance__list">
+                {% for performance in collections.performances %}
+                    <li class="performance__item">
+                        {% include performance/short.liquid %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+</div>
