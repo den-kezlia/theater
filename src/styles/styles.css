@@ -1,0 +1,8 @@
+@import "blocks/main.css";
+@import "blocks/performance_list.css";
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
