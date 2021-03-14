@@ -2,12 +2,17 @@
 layout: layout.liquid
 title: Свободный Театр Нектар
 ---
-<h1>hey you!</h1>
 
-<ul>
-    {% for performance in collections.performances %}
-        <li>
-            {% include performance/short.liquid %}
-        </li>
-    {% endfor %}
-</ul>
+<article class="performance">
+    
+</article>
+
+<section class="performances">
+    <ul class="performance__list">
+        {% for performance in collections.performances %}
+            <li class="performance__item">
+                {% include performance/short.liquid %}
+            </li>
+        {% endfor %}
+    </ul>
+</section>

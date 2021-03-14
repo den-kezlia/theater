@@ -1,14 +1,23 @@
-<h2>{{ performance.data.name }}</h2>
-<img src="{{ performance.url }}images/main.jpg" alt="{{ performance.data.name }}"/>
+<article class="performance-short">
+    <div class="performance-short__image">
+        <img src="{{ performance.url }}images/main.jpg" alt="{{ performance.data.name }}"/>
+    </div>
 
-<p>{{ performance.data.description }}</p>
+    <div class="performance-short__description">
+        <h2 class="performance-short__title">
+            {{ performance.data.name }}
+        </h2>
 
-<ul>
-    {% for event in performance.data.events %}
-        <li>
-            <time class="archive__year" datetime="{{ event.date | date: "%d.%m.%Y" }}">{{ event.date | date: "%d.%m.%Y" }}</time>
-        </li>
-    {% endfor %}
-</ul>
-
-<a href="{{ performance.url }}">details</a>
+        <div class="performance-short__date">
+            {% if performance.data.events %}
+                <time class="performance-short__date__day" datetime="{{ performance.data.events[0].date | date: "%d.%m.%Y" }}">
+                    {{ performance.data.events[0].date | date: "%d.%m.%Y" }}
+                </time>
+            {% else %}
+                <div class="performance-short__date__soon">
+                    Soon
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</article>
