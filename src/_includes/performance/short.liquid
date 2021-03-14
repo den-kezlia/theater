@@ -1,23 +1,25 @@
 <article class="performance-short">
-    <div class="performance-short__image">
-        <img class="performance-short__image__img" src="{{ performance.url }}images/main.jpg" alt="{{ performance.data.name }}"/>
-    </div>
-
-    <div class="performance-short__description">
-        <h2 class="performance-short__title">
-            {{ performance.data.name }}
-        </h2>
-
-        <div class="performance-short__date">
-            {% if performance.data.events %}
-                <time class="performance-short__date__day" datetime="{{ performance.data.events[0].date | date: "%d.%m.%Y" }}">
-                    {{ performance.data.events[0].date | date: "%d.%m.%Y" }}
-                </time>
-            {% else %}
-                <div class="performance-short__date__soon">
-                    Soon
-                </div>
-            {% endif %}
+    <a href="{{ performance.url }}" class="performance-short__link">
+        <div class="performance-short__image">
+            <img class="performance-short__image__img" src="{{ performance.url }}images/main.jpg" alt="{{ performance.data.name }}"/>
         </div>
-    </div>
+
+        <div class="performance-short__description">
+            <h2 class="performance-short__title">
+                {{ performance.data.name }}
+            </h2>
+
+            <div class="performance-short__date">
+                {% if performance.data.events %}
+                    <time class="performance-short__date__day" datetime="{{ performance.data.events[0].date | date: "%d.%m.%Y" }}">
+                        {{ performance.data.events[0].date | date: "%d.%m.%Y" }}
+                    </time>
+                {% else %}
+                    <div class="performance-short__date__soon">
+                        Soon
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </a>
 </article>

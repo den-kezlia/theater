@@ -1,0 +1,18 @@
+.performance__image {
+    width: 100vw;
+    padding: 0 20px;
+    margin-left: calc((100vw - 100%) / -2);
+}
+
+.performance__img {
+    width: 100%;
+    border-radius: 0 0 var(--image-border-radius) var(--image-border-radius);
+}
+
+.performance__order {
+    margin: 10px 0;
+}
+
+.performance__description {
+    margin: 10px 0;
+}

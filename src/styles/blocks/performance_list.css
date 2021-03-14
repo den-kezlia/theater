@@ -17,6 +17,10 @@
     background: none;
 }
 
+.performances__toggle--hidden {
+    display: none;
+}
+
 .performances {
     display: block;
     position: absolute;

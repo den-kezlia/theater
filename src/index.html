@@ -4,19 +4,14 @@ title: Свободный Театр Нектар
 ---
 
 <div class="home">
-    <article class="performance">
-        go-gox
-    </article>
-
     {% if collections.performances %}
         <section
             id="js-performances"
-            class="performances performances--collapsed"
-            data-items=""
+            class="performances"
         >
             <button
                 id="js-performances__toggle"
-                class="performances__toggle"
+                class="performances__toggle performances__toggle--hidden"
                 aria-label="Показать/Скрыть все выступления"
             ></button>
 
