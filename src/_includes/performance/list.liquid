@@ -1,0 +1,20 @@
+{% if collections.performances %}
+    <section
+        id="js-performances"
+        class="performances performances--collapsed"
+    >
+        <button
+            id="js-performances__toggle"
+            class="performances__toggle"
+            aria-label="Показать/Скрыть все выступления"
+        ></button>
+
+        <ul class="performance__list">
+            {% for performance in collections.performances %}
+                <li class="performance__item">
+                    {% include performance/card.liquid %}
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}

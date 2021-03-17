@@ -2,49 +2,8 @@
 layout: layout.liquid
 ---
 
-<div class="home">
-    <article class="performance">
-        <div class="performance__image">
-            <img class="performance__img" src="images/main.jpg" alt="{{ name }}" />
-        </div>
+<div class="main">
+    {% include performance/item.liquid %}
 
-        <div class="performance__order">
-            <button>Выбрать Билет</button>
-        </div>
-
-        <div class="performance__description">
-            <h1>{{ name }}</h1>
-            <p>{{ description }}</p>
-
-            <ul>
-                {% for event in events %}
-                    <li>
-                        <time class="archive__year" datetime="{{ event.date | date: "%d.%m.%Y" }}">{{ event.date | date: "%d.%m.%Y" }}</time>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-
-    </article>
-
-    {% if collections.performances %}
-        <section
-            id="js-performances"
-            class="performances performances--collapsed"
-        >
-            <button
-                id="js-performances__toggle"
-                class="performances__toggle"
-                aria-label="Показать/Скрыть все выступления"
-            ></button>
-
-            <ul class="performance__list">
-                {% for performance in collections.performances %}
-                    <li class="performance__item">
-                        {% include performance/short.liquid %}
-                    </li>
-                {% endfor %}
-            </ul>
-        </section>
-    {% endif %}
+    {% include performance/list.liquid %}
 </div>
