@@ -2,6 +2,7 @@
 @import "blocks/button.css";
 @import "blocks/performance.css";
 @import "blocks/performance_list.css";
+@import "blocks/tickets.css";
 
 :root {
     --image-border-radius: 10px;
@@ -9,8 +10,12 @@
     --color-white: #fff;
     --color-pink: #FF6565;
     --color-pink-dark: #fc2d2d;
+    --color-gray: lightgray;
+    --color-light-gray: #C4C4C4;
 
     --button-border-radius: 10px;
+
+    --chairs-border-radius: 3px;
 
     --transition: ease-in-out 0.3s;
 }

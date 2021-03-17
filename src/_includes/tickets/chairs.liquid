@@ -1,0 +1,52 @@
+<div class="map map--chairs">
+    <div class="performance__image">
+        <img class="performance__img" src="../images/main.jpg" alt="{{ name }}" />
+    
+        <div class="performance__details">
+            <div class="performance__details__top">
+                <h1 class="performance__title">
+                    {{ name }}
+                </h1>
+    
+                <div class="performance__date">
+                    {% if events %}
+                        <time class="performance-short__date__day" datetime="{{ events[0].date | date: "%d.%m.%Y" }}">
+                            {{ events[0].date | date: "%d.%m.%Y" }}
+                        </time>
+                    {% else %}
+                        <div class="performance-short__date__soon">
+                            Soon
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="performance__details__bottom">
+                <div class="performance__address">
+                    {{ address }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scene">
+        <div class="lines">
+            <div class="lines__left"></div>
+            <div class="lines__right"></div>
+        </div>
+        <div class="ellipses">
+            <div class="ellipses__inner"></div>
+            <div class="ellipses__outer"></div>
+            <div class="ellipses__title">Сцена</div>
+        </div>
+    </div>
+
+    <div class="chairs">
+        <div class="chairs__line-1">
+            <button class="chair"></button>
+            <button class="chair"></button>
+            <button class="chair"></button>
+            <button class="chair"></button>
+            <button class="chair"></button>
+        </div>
+    </div>
+</div>

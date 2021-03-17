@@ -1,0 +1,72 @@
+.scene {
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+}
+
+.ellipses {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 200px;
+    height: 200px;
+    transform: translateY(-50%);
+}
+
+.ellipses__inner,
+.ellipses__outer {
+    position: absolute;
+    border: 1px solid var(--color-gray);
+    background: var(--color-white);
+    border-radius: 50%;
+}
+
+.ellipses__inner {
+    width: 100%;
+    height: 100%;
+}
+
+.ellipses__outer {
+    left: 5px;
+    top: 5px;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+}
+
+.ellipses__title {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    bottom: 50px;
+}
+
+.lines {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+}
+
+.lines__left,
+.lines__right {
+    position: absolute;
+    height: 5px;
+    width: calc((100% - 198px) / 2);
+    border-bottom: 1px solid var(--color-gray);
+    background: var(--color-white);
+}
+
+.lines__right {
+    right: 0;
+}
+
+.chair {
+    display: block;
+    border: none;
+    width: 16px;
+    height: 16px;
+    margin: 5px;
+    padding: 0;
+    border-radius: var(--chairs-border-radius);
+    background: var(--color-light-gray);
+}
