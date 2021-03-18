@@ -1,7 +1,7 @@
 .scene {
     position: relative;
     overflow: hidden;
-    height: 200px;
+    height: calc(var(--ellipse-size) / 2);
 }
 
 .ellipses {
@@ -9,8 +9,8 @@
     left: 0;
     right: 0;
     margin: 0 auto;
-    width: 200px;
-    height: 200px;
+    width: calc(var(--ellipse-size) + (var(--ellipse-size) / 5));
+    height: var(--ellipse-size);
     transform: translateY(-50%);
 }
 
@@ -51,7 +51,7 @@
 .lines__right {
     position: absolute;
     height: 5px;
-    width: calc((100% - 198px) / 2);
+    width: calc((100% - var(--ellipse-size) - 2px) / 2);
     border-bottom: 1px solid var(--color-gray);
     background: var(--color-white);
 }
@@ -66,6 +66,13 @@
     padding: 20px;
 }
 
+@media (min-width: 1280px) {
+    .chairs {
+        width: 1200px;
+        margin-left: calc((1200px - 100%) / -2);
+    }
+}
+
 .chairs__line {
     display: flex;
     justify-content: space-between;
@@ -77,7 +84,7 @@
 .chairs__line__right {
     display: flex;
     justify-content: space-between;
-    width: calc(50% - var(--chair-size));
+    width: calc(50% - (var(--chair-size) / 2));
 }
 
 .chair {
@@ -93,40 +100,40 @@
 
 .chair--1,
 .chair--18 {
-    margin-top: calc(var(--chair-size) * -8);
+    margin-top: calc(var(--chair-size) / 1.1 * -8);
 }
 
 .chair--2,
 .chair--17 {
-    margin-top: calc(var(--chair-size) * -7);
+    margin-top: calc(var(--chair-size) / 1.1 * -7);
 }
 
 .chair--3,
 .chair--16 {
-    margin-top: calc(var(--chair-size) * -6);
+    margin-top: calc(var(--chair-size) / 1.2 * -6);
 }
 
 .chair--4,
 .chair--15 {
-    margin-top: calc(var(--chair-size) * -5);
+    margin-top: calc(var(--chair-size) / 1.2 * -5);
 }
 
 .chair--5,
 .chair--14 {
-    margin-top: calc(var(--chair-size) * -4);
+    margin-top: calc(var(--chair-size) / 1.5 * -4);
 }
 
 .chair--6,
 .chair--13 {
-    margin-top: calc(var(--chair-size) * -3);
+    margin-top: calc(var(--chair-size) / 1.5 * -3);
 }
 
 .chair--7,
 .chair--12 {
-    margin-top: calc(var(--chair-size) * -2);
+    margin-top: calc(var(--chair-size) / 1.5 * -2);
 }
 
 .chair--8,
 .chair--11 {
-    margin-top: calc(var(--chair-size) * -1);
+    margin-top: calc(var(--chair-size) / 1.5 * -1);
 }
