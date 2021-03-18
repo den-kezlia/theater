@@ -1,7 +1,12 @@
 .performance__image {
-    width: 100vw;
-    margin-left: calc((100vw - 100%) / -2);
     position: relative;
+}
+
+@media (min-width: 960px) {
+    .performance__image {
+        width: 960px;
+        margin-left: -80px;
+    }
 }
 
 .performance__img {
@@ -35,8 +40,8 @@
     padding: 0 20px;
 }
 
-.performance__order__button {
-    width: 100%;
+.performance__order__link {
+    display: block;
 }
 
 .performance__description {

@@ -1,4 +1,5 @@
-button {
+button,
+.button {
     border-radius: var(--button-border-radius);
     background: var(--color-pink);
     box-shadow: none;
@@ -7,10 +8,14 @@ button {
     color: var(--color-white);
     font-weight: bold;
     font-size: 14px;
+    text-align: center;
+    text-decoration: none;
 }
 
 button:hover,
-button:focus {
+button:focus,
+.button:hover,
+.button:focus {
     background: var(--color-pink-dark);
     border-color: var(--color-pink-dark);
 }

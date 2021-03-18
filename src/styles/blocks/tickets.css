@@ -60,13 +60,73 @@
     right: 0;
 }
 
+.chairs {
+    width: 100vw;
+    margin-left: calc((100vw - 100%) / -2);
+    padding: 20px;
+}
+
+.chairs__line {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.chairs__line__left,
+.chairs__line__right {
+    display: flex;
+    justify-content: space-between;
+    width: calc(50% - var(--chair-size));
+}
+
 .chair {
     display: block;
+    position: relative;
     border: none;
-    width: 16px;
-    height: 16px;
-    margin: 5px;
+    width: var(--chair-size);
+    height: var(--chair-size);
     padding: 0;
     border-radius: var(--chairs-border-radius);
     background: var(--color-light-gray);
+}
+
+.chair--1,
+.chair--18 {
+    margin-top: calc(var(--chair-size) * -8);
+}
+
+.chair--2,
+.chair--17 {
+    margin-top: calc(var(--chair-size) * -7);
+}
+
+.chair--3,
+.chair--16 {
+    margin-top: calc(var(--chair-size) * -6);
+}
+
+.chair--4,
+.chair--15 {
+    margin-top: calc(var(--chair-size) * -5);
+}
+
+.chair--5,
+.chair--14 {
+    margin-top: calc(var(--chair-size) * -4);
+}
+
+.chair--6,
+.chair--13 {
+    margin-top: calc(var(--chair-size) * -3);
+}
+
+.chair--7,
+.chair--12 {
+    margin-top: calc(var(--chair-size) * -2);
+}
+
+.chair--8,
+.chair--11 {
+    margin-top: calc(var(--chair-size) * -1);
 }

@@ -16,6 +16,7 @@
     --button-border-radius: 10px;
 
     --chairs-border-radius: 3px;
+    --chair-size: 25px;
 
     --transition: ease-in-out 0.3s;
 }
