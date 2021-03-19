@@ -15,7 +15,7 @@ let _getChairSpace = () => {
 
     switch (true) {
         case windowSize < 700:
-            chairSpace = 10;
+            chairSpace = 7;
             break;
         case windowSize >= 700 && windowSize < 1024:
             chairSpace = 15;
@@ -34,7 +34,7 @@ let sceneSize = () => {
         let ellipseSize = (windowSize / 2) + 'px';
         let chairSize = ((windowSize / 18) - _getChairSpace()) + 'px';
 
-        document.documentElement.style.setProperty('--ellipse-size', ellipseSize);
+        document.documentElement.style.setProperty('--scene-size', ellipseSize);
         document.documentElement.style.setProperty('--chair-size', chairSize);
     };
 

@@ -1,7 +1,9 @@
 .scene {
     position: relative;
     overflow: hidden;
-    height: calc(var(--ellipse-size) / 2);
+    height: calc(var(--scene-size) / 2);
+    width: 100vw;
+    margin-left: calc((100vw - 100%) / -2);
 }
 
 .ellipses {
@@ -9,8 +11,8 @@
     left: 0;
     right: 0;
     margin: 0 auto;
-    width: calc(var(--ellipse-size) + (var(--ellipse-size) / 5));
-    height: var(--ellipse-size);
+    width: calc(var(--scene-size) + (var(--scene-size) / 5));
+    height: var(--scene-size);
     transform: translateY(-50%);
 }
 
@@ -38,7 +40,7 @@
     position: absolute;
     text-align: center;
     width: 100%;
-    bottom: 50px;
+    bottom: 25%;
 }
 
 .lines {
@@ -51,7 +53,7 @@
 .lines__right {
     position: absolute;
     height: 5px;
-    width: calc((100% - var(--ellipse-size) - 2px) / 2);
+    width: calc((100% - (var(--scene-size) + var(--scene-size) / 5) - 1px) / 2);
     border-bottom: 1px solid var(--color-gray);
     background: var(--color-white);
 }
@@ -100,12 +102,12 @@
 
 .chair--1,
 .chair--18 {
-    margin-top: calc(var(--chair-size) / 1.1 * -8);
+    margin-top: calc(var(--chair-size) / 1.2 * -8);
 }
 
 .chair--2,
 .chair--17 {
-    margin-top: calc(var(--chair-size) / 1.1 * -7);
+    margin-top: calc(var(--chair-size) / 1.15 * -7);
 }
 
 .chair--3,
@@ -115,7 +117,7 @@
 
 .chair--4,
 .chair--15 {
-    margin-top: calc(var(--chair-size) / 1.2 * -5);
+    margin-top: calc(var(--chair-size) / 1.3 * -5);
 }
 
 .chair--5,
@@ -125,12 +127,12 @@
 
 .chair--6,
 .chair--13 {
-    margin-top: calc(var(--chair-size) / 1.5 * -3);
+    margin-top: calc(var(--chair-size) / 1.7 * -3);
 }
 
 .chair--7,
 .chair--12 {
-    margin-top: calc(var(--chair-size) / 1.5 * -2);
+    margin-top: calc(var(--chair-size) / 1.7 * -2);
 }
 
 .chair--8,
