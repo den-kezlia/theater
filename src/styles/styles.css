@@ -12,6 +12,7 @@
     --color-pink-dark: #fc2d2d;
     --color-gray: lightgray;
     --color-light-gray: #C4C4C4;
+    --color-blue: rgb(3, 206, 233);
 
     --button-border-radius: 10px;
 
@@ -20,4 +21,5 @@
     --chair-size: 25px;
 
     --transition: ease-in-out 0.3s;
+    --transition-fast: ease-in-out 0.1s;
 }

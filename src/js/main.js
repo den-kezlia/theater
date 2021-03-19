@@ -42,10 +42,25 @@ let sceneSize = () => {
     window.addEventListener('resize', calculateSceneSize);
 }
 
+let tickets = () => {
+    let tickets = document.getElementsByClassName('js-chair');
+
+    for (let i = 0; i < tickets.length; i++) {
+        tickets[i].addEventListener('click', (e) => {
+            let ticket = e.currentTarget;
+
+            e.preventDefault();
+            ticket.classList.toggle('chair--active');
+        });
+    }
+
+}
+
 let App = {
     init: () => {
         performanceToggle();
         sceneSize();
+        tickets();
     }
 };
 

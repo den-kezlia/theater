@@ -92,12 +92,39 @@
 .chair {
     display: block;
     position: relative;
-    border: none;
+    border: 2px solid transparent;
     width: var(--chair-size);
     height: var(--chair-size);
     padding: 0;
     border-radius: var(--chairs-border-radius);
     background: var(--color-light-gray);
+    cursor: pointer;
+    transition: background-color var(--transition-fast),
+                border-color var(--transition-fast);
+}
+
+.chair:hover,
+.chair:focus {
+    background: var(--color-light-gray);
+    border-color: var(--color-pink);
+}
+
+.chair--active {
+    background: var(--color-blue);
+}
+
+.chair--active:hover,
+.chair--active:focus {
+    background: var(--color-blue);
+}
+
+.chair__label {
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.chair--active .chair__label {
+    opacity: 1;
 }
 
 .chair--1,
