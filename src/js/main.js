@@ -42,6 +42,33 @@ let sceneSize = () => {
     window.addEventListener('resize', calculateSceneSize);
 }
 
+let _calculateTickets = () => {
+    let sum = 0;
+    let count = 0;
+    let tickets = document.getElementsByClassName('chair--active');
+
+    for (let i = 0; i < tickets.length; i++) {
+        sum += parseFloat(tickets[i].dataset.price);
+        count++;
+    }
+
+    _updateSelection(count, sum);
+}
+
+let _updateSelection = (count, sum) => {
+    let selectionEl = document.getElementById('js-selection');
+    let countEl = document.getElementById('js-selection__tickets__count');
+    let priceEl = document.getElementById('js-selection__tickets__price');
+
+    if (sum > 0) {
+        selectionEl.classList.remove('selection--hidden');
+        countEl.innerText = `${count} белита`;
+        priceEl.innerText = `${sum} грн`;
+    } else {
+        selectionEl.classList.add('selection--hidden');
+    }
+}
+
 let tickets = () => {
     let tickets = document.getElementsByClassName('js-chair');
 
@@ -51,6 +78,7 @@ let tickets = () => {
 
             e.preventDefault();
             ticket.classList.toggle('chair--active');
+            _calculateTickets();
         });
     }
 

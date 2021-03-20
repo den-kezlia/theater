@@ -166,3 +166,25 @@
 .chair--11 {
     margin-top: calc(var(--chair-size) / 1.5 * -1);
 }
+
+.selection {
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    bottom: 0;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px;
+    border: 1px solid var(--color-black);
+    border-radius: var(--button-border-radius) var(--button-border-radius) 0 0;
+}
+
+.selection--hidden {
+    display: none;
+}
+
+.selection__tickets {
+    display: flex;
+}
