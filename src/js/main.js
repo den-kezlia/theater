@@ -55,6 +55,26 @@ let _calculateTickets = () => {
     _updateSelection(count, sum);
 }
 
+let _getTicketsCountText = (count) => {
+    let msg = '';
+
+    switch (true) {
+        case count === 1:
+            msg = `${count} билет`
+            break;
+        case count > 1 && count < 5:
+            msg = `${count} билета`
+            break;
+        case count >= 5:
+            msg = `${count} билетов`
+            break;
+        default:
+            break;
+    }
+
+    return msg;
+}
+
 let _updateSelection = (count, sum) => {
     let selectionEl = document.getElementById('js-selection');
     let countEl = document.getElementById('js-selection__tickets__count');
@@ -62,7 +82,7 @@ let _updateSelection = (count, sum) => {
 
     if (sum > 0) {
         selectionEl.classList.remove('selection--hidden');
-        countEl.innerText = `${count} белита`;
+        countEl.innerText = _getTicketsCountText(count);
         priceEl.innerText = `${sum} грн`;
     } else {
         selectionEl.classList.add('selection--hidden');

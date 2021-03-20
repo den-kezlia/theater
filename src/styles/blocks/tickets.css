@@ -188,3 +188,13 @@
 .selection__tickets {
     display: flex;
 }
+
+.selection__tickets__count::after {
+    content: '|';
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.selection__btn {
+    min-width: 140px;
+}
