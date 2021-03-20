@@ -15,7 +15,7 @@ let _getChairSpace = () => {
 
     switch (true) {
         case windowSize < 700:
-            chairSpace = 7;
+            chairSpace = 5;
             break;
         case windowSize >= 700 && windowSize < 1024:
             chairSpace = 15;
@@ -44,15 +44,19 @@ let sceneSize = () => {
 
 let _calculateTickets = () => {
     let sum = 0;
-    let count = 0;
-    let tickets = document.getElementsByClassName('chair--active');
+    let tickets = [];
+    let ticketsEl = document.getElementsByClassName('chair--active');
 
-    for (let i = 0; i < tickets.length; i++) {
-        sum += parseFloat(tickets[i].dataset.price);
-        count++;
+    for (let i = 0; i < ticketsEl.length; i++) {
+        sum += parseFloat(ticketsEl[i].dataset.price);
+        tickets.push({
+            position: ticketsEl[i].dataset.position,
+            price: ticketsEl[i].dataset.price,
+        });
     }
 
-    _updateSelection(count, sum);
+    _updateSelection(tickets.length, sum);
+    _updateSelectedTicketsList(tickets);
 }
 
 let _getTicketsCountText = (count) => {
@@ -89,19 +93,38 @@ let _updateSelection = (count, sum) => {
     }
 }
 
-let tickets = () => {
-    let tickets = document.getElementsByClassName('js-chair');
+let _updateSelectedTicketsList = (tickets) => {
+    let ticketsListEl = document.getElementById('js-selection__tickets');
+    let html = '';
 
-    for (let i = 0; i < tickets.length; i++) {
-        tickets[i].addEventListener('click', (e) => {
-            let ticket = e.currentTarget;
+    tickets.forEach(ticket => {
+        let position = ticket.position.split('-');
+        html += `<li><div>${position[0]} ряд, ${position[1]} место</div><div>${ticket.price} грн</div></li>`;
+    });
+
+    ticketsListEl.innerHTML = html;
+}
+
+let tickets = () => {
+    let ticketsEl = document.getElementsByClassName('js-chair');
+    let nextEl = document.getElementById('js-selection__btn');
+
+    for (let i = 0; i < ticketsEl.length; i++) {
+        ticketsEl[i].addEventListener('click', e => {
+            let ticketEl = e.currentTarget;
 
             e.preventDefault();
-            ticket.classList.toggle('chair--active');
+            ticketEl.classList.toggle('chair--active');
             _calculateTickets();
         });
     }
 
+    nextEl.addEventListener('click', e => {
+        e.preventDefault();
+
+        let detailsEl = document.getElementById('js-selection__details');
+        detailsEl.classList.toggle('selection__details--hidden');
+    });
 }
 
 let App = {

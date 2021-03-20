@@ -9,4 +9,39 @@
             Далее
         </button>
     </div>
+
+    <div id="js-selection__details" class="selection__details selection__details--hidden">
+        <ul id="js-selection__tickets" class="selection__tickets"></ul>
+
+        <form id="js-checkout" class="checkout">
+            <div class="field field--input">
+                <input
+                    type="text"
+                    name="checkout__name"
+                    id="js-checkout__name"
+                    placeholder="Иия"
+                />
+            </div>
+            <div class="field field--input">
+                <input
+                    type="email"
+                    name="checkout__email"
+                    id="js-checkout__email"
+                    placeholder="Email"
+                />
+            </div>
+            <div class="field field--input">
+                <input
+                    type="number"
+                    name="checkout__phone"
+                    id="js-checkout__phone"
+                    placeholder="Телефон"
+                />
+            </div>
+
+            <div class="field field--button">
+                <button>Заказать</button>
+            </div>
+        </form>
+    </div>
 </div>

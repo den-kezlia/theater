@@ -65,6 +65,7 @@
 .chairs {
     width: 100vw;
     margin-left: calc((100vw - 100%) / -2);
+    margin-bottom: 40px;
     padding: 20px;
 }
 
@@ -171,6 +172,7 @@
     position: fixed;
     display: flex;
     justify-content: space-between;
+    background: var(--color-white);
     align-items: center;
     bottom: 0;
     width: 100%;
@@ -178,6 +180,7 @@
     margin: 0 auto;
     padding: 10px;
     border: 1px solid var(--color-black);
+    border-bottom: none;
     border-radius: var(--button-border-radius) var(--button-border-radius) 0 0;
 }
 
@@ -197,4 +200,13 @@
 
 .selection__btn {
     min-width: 140px;
+}
+
+.selection__details {
+    width: 100%;
+    flex: 100%;
+}
+
+.selection__details--hidden {
+    display: none;
 }
