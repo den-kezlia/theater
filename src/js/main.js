@@ -94,12 +94,17 @@ let _updateSelection = (count, sum) => {
 }
 
 let _updateSelectedTicketsList = (tickets) => {
-    let ticketsListEl = document.getElementById('js-selection__tickets');
+    let ticketsListEl = document.getElementById('js-selection__tickets__list');
     let html = '';
 
     tickets.forEach(ticket => {
         let position = ticket.position.split('-');
-        html += `<li><div>${position[0]} ряд, ${position[1]} место</div><div>${ticket.price} грн</div></li>`;
+        html += `
+            <li class="selection__tickets__item">
+                <div class="selection__tickets__item__position">${position[0]} ряд, ${position[1]} место</div>
+                <div class="selection__tickets__item__price">${ticket.price} грн</div>
+            </li>
+        `;
     });
 
     ticketsListEl.innerHTML = html;
@@ -111,9 +116,9 @@ let tickets = () => {
 
     for (let i = 0; i < ticketsEl.length; i++) {
         ticketsEl[i].addEventListener('click', e => {
+            e.preventDefault();
             let ticketEl = e.currentTarget;
 
-            e.preventDefault();
             ticketEl.classList.toggle('chair--active');
             _calculateTickets();
         });
@@ -121,9 +126,10 @@ let tickets = () => {
 
     nextEl.addEventListener('click', e => {
         e.preventDefault();
-
         let detailsEl = document.getElementById('js-selection__details');
-        detailsEl.classList.toggle('selection__details--hidden');
+
+        detailsEl.classList.remove('selection__details--hidden');
+        nextEl.classList.add('selection__btn--hidden');
     });
 }
 

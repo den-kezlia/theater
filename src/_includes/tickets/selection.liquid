@@ -1,22 +1,25 @@
 <div id="js-selection" class="selection selection--hidden">
-    <div id="selection__tickets" class="selection__tickets">
-        <div id="js-selection__tickets__count" class="selection__tickets__count"></div>
-        <div id="js-selection__tickets__price" class="selection__tickets__price"></div>
-    </div>
+    <div class="selection__wrapper">
+        <div id="selection__tickets" class="selection__tickets">
+            <div id="js-selection__tickets__count" class="selection__tickets__count"></div>
+            <div id="js-selection__tickets__price" class="selection__tickets__price"></div>
+        </div>
 
-    <div class="selection__button">
-        <button id="js-selection__btn" class="selection__btn btn">
-            Далее
-        </button>
+        <div class="selection__button">
+            <button id="js-selection__btn" class="selection__btn btn">
+                Далее
+            </button>
+        </div>
     </div>
 
     <div id="js-selection__details" class="selection__details selection__details--hidden">
-        <ul id="js-selection__tickets" class="selection__tickets"></ul>
+        <ul id="js-selection__tickets__list" class="selection__tickets__list"></ul>
 
         <form id="js-checkout" class="checkout">
             <div class="field field--input">
                 <input
                     type="text"
+                    class="input"
                     name="checkout__name"
                     id="js-checkout__name"
                     placeholder="Иия"
@@ -25,6 +28,7 @@
             <div class="field field--input">
                 <input
                     type="email"
+                    class="input"
                     name="checkout__email"
                     id="js-checkout__email"
                     placeholder="Email"
@@ -33,6 +37,7 @@
             <div class="field field--input">
                 <input
                     type="number"
+                    class="input"
                     name="checkout__phone"
                     id="js-checkout__phone"
                     placeholder="Телефон"

@@ -170,10 +170,7 @@
 
 .selection {
     position: fixed;
-    display: flex;
-    justify-content: space-between;
     background: var(--color-white);
-    align-items: center;
     bottom: 0;
     width: 100%;
     max-width: 800px;
@@ -186,6 +183,12 @@
 
 .selection--hidden {
     display: none;
+}
+
+.selection__wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .selection__tickets {
@@ -202,6 +205,10 @@
     min-width: 140px;
 }
 
+.selection__btn--hidden {
+    display: none;
+}
+
 .selection__details {
     width: 100%;
     flex: 100%;
@@ -209,4 +216,37 @@
 
 .selection__details--hidden {
     display: none;
+}
+
+.selection__tickets__list {
+    margin: 0;
+    padding: 0;
+}
+
+.selection__tickets__item {
+    display: flex;
+    list-style: none;
+    margin: 10px 0;
+    padding: 0;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.checkout {
+    width: 100%;
+    max-width: 400px;
+}
+
+.field {
+    margin: 10px 0;
+}
+
+.input {
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid var(--input-color);
+    border-radius: var(--input-border-radius);
+    padding: 10px;
+    font-size: 14px;
 }

@@ -21,6 +21,9 @@
     --chairs-border-radius: 3px;
     --chair-size: 25px;
 
+    --input-color: #000;
+    --input-border-radius: 10px;
+
     --transition: ease-in-out 0.3s;
     --transition-fast: ease-in-out 0.1s;
 }
