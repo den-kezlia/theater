@@ -1,3 +1,6 @@
+// TODO: Update webpack config to use require
+
+
 let performanceToggle = () => {
     let performancesToggle = document.getElementById('js-performances__toggle');
 
@@ -13,6 +16,7 @@ let _getChairSpace = () => {
     let windowSize = document.getElementById('js-chairs').offsetWidth;
     let chairSpace;
 
+    // TODO: Update viewports
     switch (true) {
         case windowSize < 700:
             chairSpace = 5;
@@ -29,6 +33,7 @@ let _getChairSpace = () => {
 }
 
 let sceneSize = () => {
+    // TODO: use different functions depends on scene type
     let calculateSceneSize = () => {
         let windowSize = document.getElementById('js-chairs').offsetWidth;
         let ellipseSize = (windowSize / 2) + 'px';
@@ -71,6 +76,7 @@ let _calculateTickets = () => {
 let _getTicketsCountText = (count) => {
     let msg = '';
 
+    // TODO: adde tag (span/div) wrappers for messages
     switch (true) {
         case count === 1:
             msg = `${count} билет`
@@ -96,6 +102,7 @@ let _updateSelection = (count, sum) => {
     if (sum > 0) {
         selectionEl.classList.remove('selection--hidden');
         countEl.innerText = _getTicketsCountText(count);
+        // TODO: add util function
         priceEl.innerText = `${sum} грн`;
     } else {
         selectionEl.classList.add('selection--hidden');
@@ -108,6 +115,7 @@ let _updateSelectedTicketsList = (tickets) => {
 
     tickets.forEach(ticket => {
         let position = ticket.position.split('-');
+        // TODO: add and use util functions for text
         html += `
             <li class="selection__tickets__item">
                 <div class="selection__tickets__item__position">${position[0]} ряд, ${position[1]} место</div>
@@ -169,6 +177,7 @@ let tickets = () => {
 }
 
 let notification = () => {
+    // TODO: Add function to close on Esc key or background click
     let closeEl = document.getElementById('js_notification__close');
 
     closeEl.addEventListener('click', e => {
