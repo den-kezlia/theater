@@ -15,38 +15,6 @@
     <div id="js-selection__details" class="selection__details selection__details--hidden">
         <ul id="js-selection__tickets__list" class="selection__tickets__list"></ul>
 
-        <form id="js-checkout" class="checkout">
-            <div class="field field--input">
-                <input
-                    type="text"
-                    class="input"
-                    name="checkout__name"
-                    id="js-checkout__name"
-                    placeholder="Иия"
-                />
-            </div>
-            <div class="field field--input">
-                <input
-                    type="email"
-                    class="input"
-                    name="checkout__email"
-                    id="js-checkout__email"
-                    placeholder="Email"
-                />
-            </div>
-            <div class="field field--input">
-                <input
-                    type="number"
-                    class="input"
-                    name="checkout__phone"
-                    id="js-checkout__phone"
-                    placeholder="Телефон"
-                />
-            </div>
-
-            <div class="field field--button">
-                <button>Заказать</button>
-            </div>
-        </form>
+        {% include tickets/form.liquid %}
     </div>
 </div>

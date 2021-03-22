@@ -42,17 +42,26 @@ let sceneSize = () => {
     window.addEventListener('resize', calculateSceneSize);
 }
 
-let _calculateTickets = () => {
-    let sum = 0;
+let _getSelectedTickets = () => {
     let tickets = [];
     let ticketsEl = document.getElementsByClassName('chair--active');
 
     for (let i = 0; i < ticketsEl.length; i++) {
-        sum += parseFloat(ticketsEl[i].dataset.price);
         tickets.push({
             position: ticketsEl[i].dataset.position,
             price: ticketsEl[i].dataset.price,
         });
+    }
+
+    return tickets;
+}
+
+let _calculateTickets = () => {
+    let sum = 0;
+    let tickets = _getSelectedTickets();
+
+    for (let i = 0; i < tickets.length; i++) {
+        sum += parseFloat(tickets[i].price);
     }
 
     _updateSelection(tickets.length, sum);
@@ -113,6 +122,7 @@ let _updateSelectedTicketsList = (tickets) => {
 let tickets = () => {
     let ticketsEl = document.getElementsByClassName('js-chair');
     let nextEl = document.getElementById('js-selection__btn');
+    let checkoutEl = document.getElementById('js-checkout__submit');
 
     for (let i = 0; i < ticketsEl.length; i++) {
         ticketsEl[i].addEventListener('click', e => {
@@ -131,6 +141,40 @@ let tickets = () => {
         detailsEl.classList.remove('selection__details--hidden');
         nextEl.classList.add('selection__btn--hidden');
     });
+
+    checkoutEl.addEventListener('click', e => {
+        e.preventDefault();
+        let notificationEl = document.getElementById('js-notification');
+        let notificationMessageEl = document.getElementById('js-notification__message');
+        let nameEl = document.getElementById('js-checkout__name');
+        let emailEl = document.getElementById('js-checkout__email');
+        let phoneEl = document.getElementById('js-checkout__phone');
+        let tickets = _getSelectedTickets();
+
+        if (!nameEl.value || !emailEl.value || !phoneEl.value || tickets.length === 0) {
+            return
+        }
+
+        let formData = {
+            name: nameEl.value,
+            email: emailEl.value,
+            phone: phoneEl.value,
+            tickets: tickets
+        };
+
+        // TODO: fetch tickets data
+        notificationMessageEl.innerText = 'Спасибо. Мы с вами свяжемся';
+        notificationEl.classList.remove('notification--hidden');
+    });
+}
+
+let notification = () => {
+    let closeEl = document.getElementById('js_notification__close');
+
+    closeEl.addEventListener('click', e => {
+        e.preventDefault();
+        document.location = '/';
+    });
 }
 
 let App = {
@@ -138,6 +182,7 @@ let App = {
         performanceToggle();
         sceneSize();
         tickets();
+        notification();
     }
 };
 

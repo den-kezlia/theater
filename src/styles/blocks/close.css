@@ -1,0 +1,11 @@
+.close {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    background: red;
+    border-radius: 0;
+    line-height: 1;
+    border: none;
+    cursor: pointer;
+}
