@@ -171,8 +171,19 @@ let tickets = () => {
         };
 
         // TODO: fetch tickets data
-        notificationMessageEl.innerText = 'Спасибо. Мы с вами свяжемся';
-        notificationEl.classList.remove('notification--hidden');
+        fetch('http://localhost:1337/api/getTickets')
+            .then(response => {
+                response.json().then(data => {
+                    if (data.error) {
+
+                    } else {
+                        notificationMessageEl.innerText = 'Спасибо. Мы с вами свяжемся';
+                        notificationEl.classList.remove('notification--hidden');
+
+                        console.log(data);
+                    }
+                });
+            });
     });
 }
 
