@@ -12,4 +12,4 @@ let notification = () => {
     });
 }
 
-module.exports = notification;
+export default notification;

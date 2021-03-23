@@ -63,7 +63,7 @@ let tickets = () => {
     });
 }
 
-module.exports = tickets;
+export default tickets;
 
 let _calculateTickets = () => {
     let sum = 0;

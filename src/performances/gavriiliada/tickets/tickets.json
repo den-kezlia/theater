@@ -1,3 +1,3 @@
 {
-    "layout": "performance/tickets.liquid"
+    "layout": "tickets/tickets.liquid"
 }

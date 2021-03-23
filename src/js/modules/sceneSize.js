@@ -19,7 +19,7 @@ let sceneSize = () => {
     window.addEventListener('resize', calculateSceneSize);
 }
 
-module.exports = sceneSize;
+export default sceneSize;
 
 let _getChairSpace = () => {
     let chairsSize = document.getElementById('js-chairs').offsetWidth;

@@ -13,5 +13,11 @@
     </div>
 
     <script src="/js/main.js"></script>
+
+    {% if scripts %}
+        {% for script in scripts %}
+            <script src="/js/{{ script }}"></script>
+        {% endfor %}
+    {% endif %}
 </body>
 </html>

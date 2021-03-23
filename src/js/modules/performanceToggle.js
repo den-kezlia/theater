@@ -9,4 +9,4 @@ let performancesToggle = () => {
     }
 }
 
-module.exports = performancesToggle;
+export default performancesToggle;

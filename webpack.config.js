@@ -2,13 +2,16 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: [
-      './src/styles/styles.css',
-      './src/js/main.js'
-    ],
+    // TODO: Write function to generate list of entry files
+    entry: {
+        css: './src/styles/styles.css',
+        main: './src/js/main.js',
+        performance: './src/js/performance.js',
+        tickets: './src/js/tickets.js'
+    },
     output: {
       path: path.resolve(__dirname, '_site'),
-      filename: 'js/main.js',
+      filename: 'js/[name].js',
     },
     module: {
       rules: [
