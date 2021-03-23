@@ -1,5 +1,4 @@
 module.exports = function(config) {
-    config.addPassthroughCopy('src/js');
     config.addPassthroughCopy('src/**/*.(gif|jpg|png|svg|mp4)');
 
     return {

@@ -2,10 +2,13 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './src/styles/styles.css',
+    entry: [
+      './src/styles/styles.css',
+      './src/js/main.js'
+    ],
     output: {
       path: path.resolve(__dirname, '_site'),
-      filename: 'main.js',
+      filename: 'js/main.js',
     },
     module: {
       rules: [
@@ -31,6 +34,16 @@ module.exports = {
             },
           ],
         },
+        {
+          test: /\.js$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env']
+            }
+          }
+        }
       ],
     },
     plugins: [
