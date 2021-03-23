@@ -33,9 +33,15 @@ let _getChairSpace = () => {
 }
 
 let sceneSize = () => {
+    let chairsEl = document.getElementById('js-chairs');
+
+    if (!chairsEl) {
+        return;
+    }
+
     // TODO: use different functions depends on scene type
     let calculateSceneSize = () => {
-        let windowSize = document.getElementById('js-chairs').offsetWidth;
+        let windowSize = chairsEl.offsetWidth;
         let ellipseSize = (windowSize / 2) + 'px';
         let chairSize = ((windowSize / 18) - _getChairSpace()) + 'px';
 
@@ -132,6 +138,10 @@ let tickets = () => {
     let nextEl = document.getElementById('js-selection__btn');
     let checkoutEl = document.getElementById('js-checkout__submit');
 
+    if (!nextEl) {
+        return
+    }
+
     for (let i = 0; i < ticketsEl.length; i++) {
         ticketsEl[i].addEventListener('click', e => {
             e.preventDefault();
@@ -159,9 +169,10 @@ let tickets = () => {
         let phoneEl = document.getElementById('js-checkout__phone');
         let tickets = _getSelectedTickets();
 
-        if (!nameEl.value || !emailEl.value || !phoneEl.value || tickets.length === 0) {
-            return
-        }
+        // TODO: commented while BED part in dev
+        // if (!nameEl.value || !emailEl.value || !phoneEl.value || tickets.length === 0) {
+        //     return
+        // }
 
         let formData = {
             name: nameEl.value,
@@ -191,9 +202,13 @@ let notification = () => {
     // TODO: Add function to close on Esc key or background click
     let closeEl = document.getElementById('js_notification__close');
 
+    if (!closeEl) {
+        return
+    }
+
     closeEl.addEventListener('click', e => {
         e.preventDefault();
-        document.location = '/';
+        //document.location = '/';
     });
 }
 
