@@ -1,5 +1,11 @@
 import tickets from './modules/tickets';
 import sceneSize from './modules/sceneSize';
 
-tickets();
 sceneSize();
+
+tickets.updateTicketsStatus().then(e => {
+    tickets.initEvents();
+}
+).catch(error => {
+    console.log(error);
+})

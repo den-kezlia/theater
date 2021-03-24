@@ -98,7 +98,7 @@
     height: var(--chair-size);
     padding: 0;
     border-radius: var(--chairs-border-radius);
-    background: var(--color-light-gray);
+    background: var(--chair-sold);
     cursor: pointer;
     transition: background-color var(--transition-fast),
                 border-color var(--transition-fast);
@@ -106,8 +106,17 @@
 
 .chair:hover,
 .chair:focus {
-    background: var(--color-light-gray);
+    background: var(--chair-sold);
     border-color: var(--color-pink);
+}
+
+.chair--free {
+    background-color: var(--chair-free);
+}
+
+.chair--sold,
+.chair--hold {
+    background-color: var(--chair-sold);
 }
 
 .chair--active {

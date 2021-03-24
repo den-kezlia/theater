@@ -1,69 +1,138 @@
-let tickets = () => {
-    let ticketsEl = document.getElementsByClassName('js-chair');
-    let nextEl = document.getElementById('js-selection__btn');
-    let checkoutEl = document.getElementById('js-checkout__submit');
+let initEvents = () => {
+    _initChairEvent();
+    _initGoToCheckoutEvent();
+    _initPlaceOrderEvent();
+}
 
-    if (!nextEl) {
-        return
+let updateTicketsStatus = () => {
+    let promise = (resolve, reject) => {
+        _getTickets().then(tickets => {
+            tickets.forEach(ticket => {
+                _updateChairStatus(ticket);
+            });
+
+            resolve();
+        }).catch(error => {
+            console.log(error);
+            reject(error);
+        })
     }
 
-    for (let i = 0; i < ticketsEl.length; i++) {
-        ticketsEl[i].addEventListener('click', e => {
-            e.preventDefault();
-            let ticketEl = e.currentTarget;
+    return new Promise(promise);
+}
 
-            ticketEl.classList.toggle('chair--active');
-            _calculateTickets();
+export default {
+    initEvents: initEvents,
+    updateTicketsStatus: updateTicketsStatus
+};
+
+let _initChairEvent = () => {
+    let chairsEl = document.getElementsByClassName('js-chair chair--free');
+
+    if (chairsEl) {
+        for (let i = 0; i < chairsEl.length; i++) {
+            chairsEl[i].addEventListener('click', e => {
+                e.preventDefault();
+                let chairEl = e.currentTarget;
+
+                chairEl.classList.toggle('chair--active');
+                _calculateTickets();
+            });
+        }
+    }
+}
+
+let _initGoToCheckoutEvent = () => {
+    let buttonEl = document.getElementById('js-selection__btn');
+
+    if (buttonEl) {
+        buttonEl.addEventListener('click', e => {
+            e.preventDefault();
+            let detailsEl = document.getElementById('js-selection__details');
+
+            detailsEl.classList.remove('selection__details--hidden');
+            buttonEl.classList.add('selection__btn--hidden');
         });
     }
+}
 
-    nextEl.addEventListener('click', e => {
-        e.preventDefault();
-        let detailsEl = document.getElementById('js-selection__details');
+let _initPlaceOrderEvent = () => {
+    let buttonEl = document.getElementById('js-checkout__submit');
 
-        detailsEl.classList.remove('selection__details--hidden');
-        nextEl.classList.add('selection__btn--hidden');
-    });
+    if (buttonEl) {
+        buttonEl.addEventListener('click', e => {
+            e.preventDefault();
+            let nameEl = document.getElementById('js-checkout__name');
+            let emailEl = document.getElementById('js-checkout__email');
+            let phoneEl = document.getElementById('js-checkout__phone');
 
-    checkoutEl.addEventListener('click', e => {
-        e.preventDefault();
-        let notificationEl = document.getElementById('js-notification');
-        let notificationMessageEl = document.getElementById('js-notification__message');
-        let nameEl = document.getElementById('js-checkout__name');
-        let emailEl = document.getElementById('js-checkout__email');
-        let phoneEl = document.getElementById('js-checkout__phone');
-        let tickets = _getSelectedTickets();
+            // TODO: commented while BED part in dev
+            if (!nameEl.value || !emailEl.value || !phoneEl.value || tickets.length === 0) {
+                return
+            }
 
-        // TODO: commented while BED part in dev
-        // if (!nameEl.value || !emailEl.value || !phoneEl.value || tickets.length === 0) {
-        //     return
-        // }
+            let data = {
+                name: nameEl.value,
+                email: emailEl.value,
+                phone: phoneEl.value,
+                tickets: _getSelectedTickets()
+            };
 
-        let formData = {
-            name: nameEl.value,
-            email: emailEl.value,
-            phone: phoneEl.value,
-            tickets: tickets
-        };
-
-        // TODO: fetch tickets data
-        fetch('http://localhost:1337/api/getTickets')
-            .then(response => {
+            // TODO: fetch tickets data
+            fetch('http://localhost:1337/api/holdTickets', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                  }
+            }).then(response => {
                 response.json().then(data => {
                     if (data.error) {
 
                     } else {
+                        let notificationEl = document.getElementById('js-notification');
+                        let notificationMessageEl = document.getElementById('js-notification__message');
+
                         notificationMessageEl.innerText = 'Спасибо. Мы с вами свяжемся';
                         notificationEl.classList.remove('notification--hidden');
-
                         console.log(data);
                     }
                 });
             });
-    });
+        });
+    }
 }
 
-export default tickets;
+let _getTickets = () => {
+    let promise = (resolve, reject) => {
+        try {
+            fetch('http://localhost:1337/api/getTickets')
+                .then(response => {
+                    response.json().then(data => {
+                        if (data.error) {
+                            // TODO: implement error notifications
+                            reject({
+                                error: data.message,
+                                msg: 'Проблема с сервером. Свяжитесь по телефону'
+                            })
+                        } else {
+                            resolve(data.tickets);
+                        }
+                    });
+                });
+        } catch (error) {
+            reject(error)
+        }
+    }
+
+    return new Promise(promise);
+}
+
+let _updateChairStatus = (ticket) => {
+    let chairEl = document.querySelectorAll(`[data-position="${ticket.row}-${ticket.coll}"]`)[0];
+
+    chairEl.classList.add(`chair--${ticket.status}`);
+}
 
 let _calculateTickets = () => {
     let sum = 0;

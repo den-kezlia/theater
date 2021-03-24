@@ -16,7 +16,7 @@ Airtable.configure({
 });
 
 let getTickets = () => {
-    let promise = ((resolve, reject) => {
+    let promise = (resolve, reject) => {
         let TicketsTable = Airtable.base(TABLE_ID);
         TicketsTable('Seats').select({ view: KANBAN }).firstPage(async (err, records) => {
             if (err) { reject(err); return; }
@@ -26,16 +26,58 @@ let getTickets = () => {
                     coll: item.get('Coll'),
                     row: item.get('Row'),
                     price: item.get('Price'),
-                    status: item.get('Status')
+                    status: item.get('Status').toLowerCase()
                 }
             })
             resolve(tickets);
         });
-    });
+    };
+
+    return new Promise(promise);
+}
+
+let holdTickets = (data) => {
+    // TODO: check if fields are not empty and valid
+
+    let promise = (resolve, reject) => {
+        let TicketsTable = Airtable.base(TABLE_ID);
+        let query = _getTicketsSearchQuery(data.tickets);
+
+        TicketsTable('Seats').select({
+            filterByFormula: query
+        }).firstPage(async (err, records) => {
+            records.forEach(ticket => {
+                if (ticket.get('Status') !== TICKET_STATUSES.FREE) {
+                    reject({
+                        error: true,
+                        message: `Билет ${ticket.get('Row')} - ${ticket.get('Coll')} занят`
+                    })
+                }
+            })
+
+            resolve(await _holdTickets(records));
+        })
+    }
 
     return new Promise(promise);
 }
 
 module.exports = {
-    getTickets: getTickets
+    getTickets: getTickets,
+    holdTickets: holdTickets
+}
+
+let _holdTickets = async (tickets) => {
+    for (let ticket of tickets) {
+        await ticket.updateFields({
+            'Status': TICKET_STATUSES.HOLD
+        });
+    };
+}
+
+let _getTicketsSearchQuery = (tickets) => {
+    return 'OR(' + tickets.map(ticket => {
+        let position = ticket.position.split('-');
+        return `AND(Row = "${position[0]}", Coll = "${position[1]}")`
+    }).join(',') + ')'
 }

@@ -16,6 +16,11 @@
     --color-gray: lightgray;
     --color-light-gray: #C4C4C4;
     --color-blue: rgb(3, 206, 233);
+    --color-green: green;
+
+    --chair-sold: lightgray;
+    --chair-free: green;
+    --chair-active: #03cee9;
 
     --button-border-radius: 10px;
 
