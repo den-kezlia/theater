@@ -65,6 +65,7 @@ let _initPlaceOrderEvent = () => {
             let nameEl = document.getElementById('js-checkout__name');
             let emailEl = document.getElementById('js-checkout__email');
             let phoneEl = document.getElementById('js-checkout__phone');
+            let tickets = _getSelectedTickets();
 
             // TODO: commented while BED part in dev
             if (!nameEl.value || !emailEl.value || !phoneEl.value || tickets.length === 0) {
@@ -72,10 +73,12 @@ let _initPlaceOrderEvent = () => {
             }
 
             let data = {
-                name: nameEl.value,
-                email: emailEl.value,
-                phone: phoneEl.value,
-                tickets: _getSelectedTickets()
+                guest: {
+                    name: nameEl.value,
+                    email: emailEl.value,
+                    phone: phoneEl.value,
+                },
+                tickets: tickets
             };
 
             // TODO: fetch tickets data
