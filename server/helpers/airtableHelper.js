@@ -1,5 +1,6 @@
 let config = require('../../config/config.json');
 let Airtable = require('airtable');
+let bot = require('./bot');
 
 const KANBAN = 'Kanban';
 const TICKET_STATUSES = {
@@ -7,6 +8,14 @@ const TICKET_STATUSES = {
     HOLD: 'Hold',
     SOLD: 'Sold'
 }
+
+const ORDER_STATUSES = {
+    NEW: 'New',
+    IN_PROGRESS: 'In Progress',
+    REJECT: 'Reject',
+    Done: 'Done'
+}
+
 // TODO: resolve issue with table ID
 const TABLE_TICKETS_ID = '';
 const TABLE_GUESTS_ID = '';
@@ -24,8 +33,10 @@ let getTickets = () => {
 
             let tickets = records.map(item => {
                 return {
-                    coll: item.get('Coll'),
-                    row: item.get('Row'),
+                    position: {
+                        col: item.get('Col'),
+                        row: item.get('Row'),
+                    },
                     price: item.get('Price'),
                     status: item.get('Status').toLowerCase()
                 }
@@ -53,7 +64,7 @@ let holdTickets = (data) => {
                 if (ticket.get('Status') !== TICKET_STATUSES.FREE) {
                     reject({
                         error: true,
-                        message: `Билет ${ticket.get('Row')} - ${ticket.get('Coll')} занят`
+                        message: `Билет ${ticket.get('Row')} - ${ticket.get('Col')} занят`
                     })
                 }
             });
@@ -61,7 +72,8 @@ let holdTickets = (data) => {
             let guestID = await _getGuestID(data.guest);
             resolve(await _holdTickets({
                 tickets: records,
-                guestID: guestID
+                guestID: guestID,
+                data: data
             }));
         })
     }
@@ -86,12 +98,16 @@ let _holdTickets = async (data) => {
         }
     };
     // TODO: sync guest with main Guests Table
+    let order = await _createOrder(data);
+    bot.sendNewTicketHold({
+        data: data.data,
+        orderID: order.getId()
+    });
 }
 
 let _getTicketsSearchQuery = (tickets) => {
     return 'OR(' + tickets.map(ticket => {
-        let position = ticket.position.split('-');
-        return `AND(Row = "${position[0]}", Coll = "${position[1]}")`
+        return `AND(Row = "${ticket.position.row}", Col = "${ticket.position.col}")`
     }).join(',') + ')'
 }
 
@@ -136,6 +152,32 @@ let _createGuest = async (data) => {
                     'Name': data.name,
                     'Phone': data.phone,
                     'Email': data.email
+                }
+            }
+        ], (err, records) => {
+            if (err) { reject(err); return; }
+
+            resolve(records[0]);
+        })
+    }
+
+    return new Promise(promise);
+}
+
+let _createOrder = async (data) => {
+    let promise = (resolve, reject) => {
+        let Table = Airtable.base(TABLE_TICKETS_ID);
+        let seatsIDs = data.tickets.map(ticket => {
+            return ticket.getId()
+        })
+
+        Table('Orders').create([
+            {
+                'fields': {
+                    'Name': '',
+                    'Status': ORDER_STATUSES.NEW,
+                    'Guest': [data.guestID],
+                    'Seats': seatsIDs
                 }
             }
         ], (err, records) => {

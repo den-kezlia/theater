@@ -132,9 +132,10 @@ let _getTickets = () => {
 }
 
 let _updateChairStatus = (ticket) => {
-    let chairEl = document.querySelectorAll(`[data-position="${ticket.row}-${ticket.coll}"]`)[0];
+    let chairEl = document.querySelectorAll(`[data-position="${ticket.position.row}-${ticket.position.col}"]`)[0];
 
     chairEl.classList.add(`chair--${ticket.status}`);
+    chairEl.dataset.price = ticket.price;
 }
 
 let _calculateTickets = () => {
@@ -154,8 +155,13 @@ let _getSelectedTickets = () => {
     let ticketsEl = document.getElementsByClassName('chair--active');
 
     for (let i = 0; i < ticketsEl.length; i++) {
+        let position = ticketsEl[i].dataset.position.split('-');
+
         tickets.push({
-            position: ticketsEl[i].dataset.position,
+            position: {
+                row: position[0],
+                col: position[1]
+            },
             price: ticketsEl[i].dataset.price,
         });
     }
@@ -204,11 +210,10 @@ let _updateSelectedTicketsList = (tickets) => {
     let html = '';
 
     tickets.forEach(ticket => {
-        let position = ticket.position.split('-');
         // TODO: add and use util functions for text
         html += `
             <li class="selection__tickets__item">
-                <div class="selection__tickets__item__position">${position[0]} ряд, ${position[1]} место</div>
+                <div class="selection__tickets__item__position">${ticket.position.row} ряд, ${ticket.position.col} место</div>
                 <div class="selection__tickets__item__price">${ticket.price} грн</div>
             </li>
         `;
