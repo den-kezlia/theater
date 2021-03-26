@@ -8,7 +8,8 @@ const TICKET_STATUSES = {
     SOLD: 'Sold'
 }
 // TODO: resolve issue with table ID
-const TABLE_ID = '';
+const TABLE_TICKETS_ID = '';
+const TABLE_GUESTS_ID = '';
 
 Airtable.configure({
     endpointUrl: config.apiUrl,
@@ -17,8 +18,8 @@ Airtable.configure({
 
 let getTickets = () => {
     let promise = (resolve, reject) => {
-        let TicketsTable = Airtable.base(TABLE_ID);
-        TicketsTable('Seats').select({ view: KANBAN }).firstPage(async (err, records) => {
+        let Table = Airtable.base(TABLE_TICKETS_ID);
+        Table('Seats').select({ view: KANBAN }).firstPage(async (err, records) => {
             if (err) { reject(err); return; }
 
             let tickets = records.map(item => {
@@ -40,10 +41,10 @@ let holdTickets = (data) => {
     // TODO: check if fields are not empty and valid
 
     let promise = (resolve, reject) => {
-        let TicketsTable = Airtable.base(TABLE_ID);
+        let Table = Airtable.base(TABLE_TICKETS_ID);
         let query = _getTicketsSearchQuery(data.tickets);
 
-        TicketsTable('Seats').select({
+        Table('Seats').select({
             filterByFormula: query
         }).firstPage(async (err, records) => {
             if (err) { reject(err); return; }
@@ -84,6 +85,7 @@ let _holdTickets = async (data) => {
             console.log(error);
         }
     };
+    // TODO: sync guest with main Guests Table
 }
 
 let _getTicketsSearchQuery = (tickets) => {
@@ -95,10 +97,11 @@ let _getTicketsSearchQuery = (tickets) => {
 
 let _getGuestID = async (data) => {
     let promise = (resolve, reject) => {
-        let TicketsTable = Airtable.base(TABLE_ID);
-        let query = `Phone = "${data.phone}"`;
+        let Table = Airtable.base(TABLE_TICKETS_ID);
+        // TODO: Resolve issue with phone search
+        let query = `Email = "${data.email}"`;
 
-        TicketsTable('Guests').select({
+        Table('Guests').select({
             filterByFormula: query
         }).firstPage(async (err, records) => {
             if (err) { reject(err); return; }
@@ -125,9 +128,9 @@ let _getGuestID = async (data) => {
 
 let _createGuest = async (data) => {
     let promise = (resolve, reject) => {
-        let TicketsTable = Airtable.base(TABLE_ID);
+        let Table = Airtable.base(TABLE_TICKETS_ID);
 
-        TicketsTable('Guests').create([
+        Table('Guests').create([
             {
                 'fields': {
                     'Name': data.name,
@@ -140,8 +143,6 @@ let _createGuest = async (data) => {
 
             resolve(records[0]);
         })
-
-        // TODO: sync new guest with main Guests Table
     }
 
     return new Promise(promise);
