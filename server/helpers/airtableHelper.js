@@ -17,8 +17,8 @@ const ORDER_STATUSES = {
 }
 
 // TODO: resolve issue with table ID
-const TABLE_TICKETS_ID = '';
-const TABLE_GUESTS_ID = '';
+const TABLE_TICKETS_ID = config.TABLE_TICKETS_ID;
+const TABLE_GUESTS_ID = config.TABLE_GUESTS_ID;
 
 Airtable.configure({
     endpointUrl: config.apiUrl,

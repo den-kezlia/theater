@@ -1,7 +1,8 @@
 let TeleBot = require('telebot');
+let config = require('../../config/config.json');
 
-const TOKEN = '';
-const ID_LIST = [];
+// TODO: improve this config
+const ID_LIST = config.TELEGRAM_ID_LIST;
 
 class Bot {
     constructor() {
@@ -17,7 +18,7 @@ class Bot {
         };
 
         this.bot = new TeleBot({
-            token: TOKEN,
+            token: config.TELEGRAM_TOKEN,
             usePlugins: ['namedButtons', 'commandButton'],
             pluginConfig: {
                 namedButtons: {
