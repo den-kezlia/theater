@@ -14,6 +14,10 @@ class Bot {
             getInProgressOrders: {
                 label: 'В обработке',
                 command: '/getInProgressOrders'
+            },
+            getMineIProgressOrders: {
+                label: 'Мои обработке',
+                command: '/getMineIProgressOrders'
             }
         };
 
@@ -28,13 +32,17 @@ class Bot {
         });
 
         this.bot.on('callbackQuery', msg => {
-            const id = msg.from.id;
-            const replyOptions = {};
-            const data = JSON.parse(msg.data);
+            let id = msg.from.id;
+            let replyOptions = {};
+            let data = JSON.parse(msg.data);
             let message;
 
             switch (data.type) {
                 case 'inProgress':
+                    _updateOrderStatus({
+                        orderID: data.orderID,
+                        userID: id
+                    });
                     message = 'Взял в обработку';
                     break;
                 default:
@@ -78,4 +86,8 @@ let _formatTicketsMsg = (tickets) => {
 
 let _formatGuestMsg = (guest) => {
     return `Гость:\n${guest.name}. Телефон: ${guest.phone}. Email: ${guest.email}`
+}
+
+let _updateOrderStatus = (data) => {
+
 }

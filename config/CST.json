@@ -1,0 +1,18 @@
+{
+    "TICKET_STATUSES": {
+        "FREE": "Free",
+        "HOLD": "Hold",
+        "SOLD": "Sold"
+    },
+    "ORDER_STATUSES": {
+        "NEW": "New",
+        "IN_PROGRESS": "In Progress",
+        "REJECT": "Reject",
+        "DONE": "Done"
+    },
+    "TABLES": {
+        "SEATS": "Seats",
+        "GUESTS": "Guests",
+        "ORDERS": "Orders"
+    }
+}

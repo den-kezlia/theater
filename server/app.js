@@ -1,8 +1,9 @@
 let express = require('express');
 let cors = require('cors');
-let airtableHelper = require('./helpers/airtableHelper');
+let helper = require('./helpers/helper');
 
 let app = express();
+// TODO: Find solution for cors
 app.use(cors({origin: 'http://localhost:8080'}));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -15,7 +16,7 @@ app.get('/api/getTickets', async (req, res) => {
     let tickets = [];
 
     try {
-        tickets = await airtableHelper.getTickets();
+        tickets = await helper.getTickets();
     } catch (err) {
         error = true;
         message = err.message;
@@ -33,7 +34,7 @@ app.post('/api/holdTickets', async (req, res) => {
     let message = '';
 
     try {
-        let result = await airtableHelper.holdTickets(req.body);
+        let result = await helper.holdTickets(req.body);
         message = result;
     } catch (err) {
         error = true;
