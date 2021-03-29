@@ -2,6 +2,10 @@
     "apiKey": "",
     "apiUrl": "https://api.airtable.com",
     "ID": "",
+    "TABLE_TICKETS_ID": "",
+    "TABLE_GUESTS_ID": "",
+    "TELEGRAM_TOKEN": "",
+    "TELEGRAM_ID_LIST": [""],
     "srcPerformancePath": "src/performances/",
     "transliterationOptions": {
         "trim": true,
