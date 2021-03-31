@@ -15,16 +15,44 @@ class Table {
         });
     }
 
-    getRecords(table, selectOptions) {
+    getRecords(tableID, selectOptions) {
         let promise = (resolve, reject) => {
-            let SeatsTable = this.Airtable.base(TABLE_TICKETS_ID);
+            let table = this.Airtable.base(TABLE_TICKETS_ID);
             let options = {};
 
             if (selectOptions) {
                 options = Object.assign(options, selectOptions)
             }
 
-            SeatsTable(table).select(options).firstPage(async (err, records) => {
+            table(tableID).select(options).firstPage(async (err, records) => {
+                if (err) { reject(err); return; }
+
+                resolve(records);
+            });
+        }
+
+        return new Promise(promise);
+    }
+
+    getRecord(tableID, ID) {
+        let promise = (resolve, reject) => {
+            let table = this.Airtable.base(TABLE_TICKETS_ID);
+
+            table(tableID).find(ID, (err, record) => {
+                if (err) { reject(err); return; }
+
+                resolve(record);
+            });
+        }
+
+        return new Promise(promise);
+    }
+
+    updateRecords(tableID, data) {
+        let promise = (resolve, reject) => {
+            let table = this.Airtable.base(TABLE_TICKETS_ID);
+
+            table(tableID).update(data, (err, records) => {
                 if (err) { reject(err); return; }
 
                 resolve(records);
