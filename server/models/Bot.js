@@ -1,6 +1,6 @@
 let TeleBot = require('telebot');
 let config = require('../../config/config.json');
-let Table = require('./Table');
+let helper = require('../helpers/helper');
 const CST = require('../../config/CST.json');
 
 // TODO: improve this config
@@ -8,17 +8,17 @@ const ID_LIST = config.TELEGRAM_ID_LIST;
 
 let _getButtons = () => {
     return {
-        getAllOrders: {
+        getActiveOrders: {
             label: 'Все заказы',
-            command: '/getAllOrders'
+            command: '/getActiveOrders'
         },
         getInProgressOrders: {
             label: 'В обработке',
             command: '/getInProgressOrders'
         },
-        getMineIProgressOrders: {
+        getMineInProgressOrders: {
             label: 'Мои обработке',
-            command: '/getMineIProgressOrders'
+            command: '/getMineInProgressOrders'
         }
     }
 }
@@ -42,9 +42,9 @@ class Bot {
             let replyOptions = {
                 replyMarkup: this.bot.keyboard([
                     [
-                        buttons.getAllOrders.label,
+                        buttons.getActiveOrders.label,
                         buttons.getInProgressOrders.label,
-                        buttons.getMineIProgressOrders.label
+                        buttons.getMineInProgressOrders.label
                     ]
                 ], { resize: true }),
                 parseMode: 'markdown'
@@ -53,22 +53,20 @@ class Bot {
             return this.bot.sendMessage(id, 'Выберите одну из команд', replyOptions);
         });
 
-        this.bot.on('/getAllOrders', msg => {
+        this.bot.on('/getActiveOrders', msg => {
             let id = msg.from.id;
-            let query = `OR(Status = "${CST.ORDER_STATUSES.NEW}", Status = "${CST.ORDER_STATUSES.IN_PROGRESS}")`;
 
-            Table.getRecords(CST.TABLES.ORDERS, { filterByFormula: query }).then(async records => {
-                for (let order of records) {
+            helper.getActiveOrders().then(async orderRecords => {
+                for (let orderRecord of orderRecords) {
                     try {
-                        await this._sendOrderCard(id, order);
+                        await this._sendOrderCard(id, orderRecord);
                     } catch (error) {
                         console.log(error);
                     }
                 }
-
             }).catch(error => {
                 console.log(error);
-            })
+            });
         });
 
         this.bot.on('callbackQuery', msg => {
@@ -95,7 +93,7 @@ class Bot {
                     break;
             }
 
-            _updateOrderStatus({
+            helper.updateOrderStatus({
                 orderID: data.orderID,
                 userID: id
             }, status).then(updatedOrder => {
@@ -109,8 +107,8 @@ class Bot {
     }
 
     sendNewTicketHold(data) {
-        let ticketsMsg = _formatTicketsMsg(data.data.tickets);
-        let guestMsg = _formatGuestMsg(data.data.guest);
+        let ticketsMsg = helper.formatTicketsMsg(data.tickets);
+        let guestMsg = helper.formatGuestMsg(data.guest);
         let message = ticketsMsg + '\n\n' + guestMsg;
 
         let replyMarkup = this.bot.inlineKeyboard([
@@ -129,9 +127,9 @@ class Bot {
 
     async _sendOrderCard (id, orderRecord) {
         let replyMarkup;
-        let orderDetails = await _getOrderDetails(orderRecord);
-        let ticketsMsg = _formatTicketsMsg(orderDetails.tickets);
-        let guestMsg = _formatGuestMsg(orderDetails.guest);
+        let orderDetails = await helper.getOrderDetails(orderRecord);
+        let ticketsMsg = helper.formatTicketsMsg(orderDetails.tickets);
+        let guestMsg = helper.formatGuestMsg(orderDetails.guest);
         let message = ticketsMsg + '\n\n' + guestMsg;
 
         switch (orderDetails.status) {
@@ -150,22 +148,19 @@ class Bot {
             case CST.ORDER_STATUSES.IN_PROGRESS:
                 replyMarkup = this.bot.inlineKeyboard([
                     [
-                        this.bot.inlineButton('Отмена', {callback: JSON.stringify(
-                            {
+                        this.bot.inlineButton('Отмена', {
+                            callback: JSON.stringify({
                                 type: 'cancel',
                                 orderID: orderRecord.getId()
-                            }
-                        )})
+                        })})
                     ], [
-                        this.bot.inlineButton('Продано', {callback: JSON.stringify(
-                            {
+                        this.bot.inlineButton('Продано', {
+                            callback: JSON.stringify({
                                 type: 'done',
                                 orderID: orderRecord.getId()
-                            }
-                        )})
+                        })})
                     ]
                 ]);
-
                 break;
             default:
                 break;
@@ -176,94 +171,3 @@ class Bot {
 }
 
 module.exports = new Bot();
-
-let _getOrderDetails = async (order) => {
-    let tickets = []
-    for (let id of order.get('Seats')) {
-        let ticketRecord = await Table.getRecord(CST.TABLES.SEATS, id);
-        tickets.push({
-            position: {
-                row: ticketRecord.get('Row'),
-                col: ticketRecord.get('Col')
-            },
-            price: ticketRecord.get('Price'),
-            status: ticketRecord.get('Status')
-        });
-    }
-
-    let guestRecord = await Table.getRecord(CST.TABLES.GUESTS, order.get('Guest'));
-    let guest = {
-        name: guestRecord.get('Name'),
-        phone: guestRecord.get('Phone'),
-        email: guestRecord.get('Email')
-    }
-
-    return {
-        tickets: tickets,
-        guest: guest,
-        status: order.get('Status')
-    };
-}
-
-let _formatTicketsMsg = (tickets) => {
-    return tickets.map(ticket => {
-        return `Ряд ${ticket.position.row} Место ${ticket.position.col}. Цена ${ticket.price} грн.`;
-    }).join('\n');
-}
-
-let _formatGuestMsg = (guest) => {
-    return `Гость:\n${guest.name}. Телефон: ${guest.phone}. Email: ${guest.email}`
-}
-
-let _updateOrderStatus = async (data, orderStatus) => {
-    try {
-        let orderRecord = await Table.getRecord(CST.TABLES.ORDERS, data.orderID);
-        let json = [{
-            "id": orderRecord.getId(),
-            "fields": {
-                "Status": orderStatus,
-                "Name": `${data.userID}`
-            }
-        }];
-        try {
-            let updatedOrderRecord = await Table.updateRecords(CST.TABLES.ORDERS, json);
-            let nextTicketStatus;
-
-            switch (orderStatus) {
-                case CST.ORDER_STATUSES.REJECT:
-                    nextTicketStatus = CST.TICKET_STATUSES.FREE;
-                    break;
-                case CST.ORDER_STATUSES.DONE:
-                    nextTicketStatus = CST.TICKET_STATUSES.SOLD;
-                    break;
-                default:
-                    break;
-            }
-
-            if (nextTicketStatus) {
-                let ticketIDs = await updatedOrderRecord[0].get('Seats');
-                let ticketsJSON = ticketIDs.map(ticketID => {
-                    let json = {
-                        "id": ticketID,
-                        "fields": {
-                            "Status": nextTicketStatus
-                        }
-                    }
-
-                    if (orderStatus === CST.ORDER_STATUSES.REJECT) {
-                        json.fields.Guest = [];
-                    }
-
-                    return json;
-                })
-                await Table.updateRecords(CST.TABLES.SEATS, ticketsJSON);
-            }
-
-            return updatedOrderRecord[0];
-        } catch (error) {
-            console.log(error)
-        }
-    } catch (error) {
-        console.log(error)
-    }
-}

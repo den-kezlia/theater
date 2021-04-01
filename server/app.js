@@ -1,6 +1,7 @@
 let express = require('express');
 let cors = require('cors');
 let helper = require('./helpers/helper');
+let Bot = require('./models/Bot');
 
 let app = express();
 // TODO: Find solution for cors
@@ -35,6 +36,7 @@ app.post('/api/holdTickets', async (req, res) => {
 
     try {
         let result = await helper.holdTickets(req.body);
+        Bot.sendNewTicketHold(result);
         message = result;
     } catch (err) {
         error = true;

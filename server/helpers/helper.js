@@ -1,5 +1,4 @@
 let Table = require('../models/Table');
-let Bot = require('../models/Bot');
 const CST = require('../../config/CST.json');
 
 let getTickets = () => {
@@ -44,11 +43,16 @@ let holdTickets = (data) => {
             });
 
             let guestID = await _getGuestID(data.guest);
-            resolve(await _holdTickets({
-                tickets: records,
-                guestID: guestID,
-                data: data
-            }));
+            let orderRecord = await _holdTickets({
+                ticketRecords: records,
+                guestID: guestID
+            });
+
+            resolve({
+                orderID: orderRecord.getId(),
+                tickets: data.tickets,
+                guest: data.guest
+            });
         } catch (error) {
             reject(error);
         }
@@ -57,36 +61,143 @@ let holdTickets = (data) => {
     return new Promise(promise);
 }
 
+let getOrderDetails = async (order) => {
+    let tickets = []
+    for (let id of order.get('Seats')) {
+        let ticketRecord = await Table.getRecord(CST.TABLES.SEATS, id);
+        tickets.push({
+            position: {
+                row: ticketRecord.get('Row'),
+                col: ticketRecord.get('Col')
+            },
+            price: ticketRecord.get('Price'),
+            status: ticketRecord.get('Status')
+        });
+    }
+
+    let guestRecord = await Table.getRecord(CST.TABLES.GUESTS, order.get('Guest'));
+    let guest = {
+        name: guestRecord.get('Name'),
+        phone: guestRecord.get('Phone'),
+        email: guestRecord.get('Email')
+    }
+
+    return {
+        tickets: tickets,
+        guest: guest,
+        status: order.get('Status')
+    };
+}
+
+let getActiveOrders = async () => {
+    let promise = (resolve, reject) => {
+        let query = `OR(Status = "${CST.ORDER_STATUSES.NEW}", Status = "${CST.ORDER_STATUSES.IN_PROGRESS}")`;
+
+        Table.getRecords(CST.TABLES.ORDERS, { filterByFormula: query }).then(records => {
+            resolve(records);
+        }).catch(error => {
+            reject(error);
+        })
+    }
+
+    return new Promise(promise);
+}
+
+let updateOrderStatus = async (data, orderStatus) => {
+    try {
+        let orderRecord = await Table.getRecord(CST.TABLES.ORDERS, data.orderID);
+        let json = [{
+            "id": orderRecord.getId(),
+            "fields": {
+                "Status": orderStatus,
+                "Name": `${data.userID}`
+            }
+        }];
+        try {
+            let updatedOrderRecord = await Table.updateRecords(CST.TABLES.ORDERS, json);
+            let nextTicketStatus;
+
+            switch (orderStatus) {
+                case CST.ORDER_STATUSES.REJECT:
+                    nextTicketStatus = CST.TICKET_STATUSES.FREE;
+                    break;
+                case CST.ORDER_STATUSES.DONE:
+                    nextTicketStatus = CST.TICKET_STATUSES.SOLD;
+                    break;
+                default:
+                    break;
+            }
+
+            if (nextTicketStatus) {
+                let ticketIDs = await updatedOrderRecord[0].get('Seats');
+                let ticketsJSON = ticketIDs.map(ticketID => {
+                    let json = {
+                        "id": ticketID,
+                        "fields": {
+                            "Status": nextTicketStatus
+                        }
+                    }
+
+                    if (orderStatus === CST.ORDER_STATUSES.REJECT) {
+                        json.fields.Guest = [];
+                    }
+
+                    return json;
+                })
+                await Table.updateRecords(CST.TABLES.SEATS, ticketsJSON);
+            }
+
+            return updatedOrderRecord[0];
+        } catch (error) {
+            console.log(error)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+let formatTicketsMsg = (tickets) => {
+    return tickets.map(ticket => {
+        return `Ряд ${ticket.position.row} Место ${ticket.position.col}. Цена ${ticket.price} грн.`;
+    }).join('\n');
+}
+
+let formatGuestMsg = (guest) => {
+    return `Гость:\n${guest.name}. Телефон: ${guest.phone}. Email: ${guest.email}`
+}
+
 module.exports = {
     getTickets: getTickets,
-    holdTickets: holdTickets
+    holdTickets: holdTickets,
+    getOrderDetails: getOrderDetails,
+    getActiveOrders: getActiveOrders,
+    updateOrderStatus: updateOrderStatus,
+    formatTicketsMsg: formatTicketsMsg,
+    formatGuestMsg: formatGuestMsg
 }
 
 let _holdTickets = async (data) => {
-    for (let ticket of data.tickets) {
+    let ticketIDs = [];
+
+    for (let ticketRecord of data.ticketRecords) {
         try {
-            await ticket.updateFields({
+            await ticketRecord.updateFields({
                 'Status': CST.TICKET_STATUSES.HOLD,
                 'Guest': [data.guestID]
-            })
+            });
+            ticketIDs.push(ticketRecord.getId());
         } catch (error) {
             console.log(error);
         }
     };
     // TODO: sync guest with main Guests Table
-    let ticketIDs = data.tickets.map(ticket => {
-        return ticket.getId()
-    });
 
-    let order = await Table.createOrder({
+    let orderRecord = await Table.createOrder({
         ticketIDs: ticketIDs,
         guestID: data.guestID
     });
 
-    Bot.sendNewTicketHold({
-        data: data.data,
-        orderID: order.getId()
-    });
+    return orderRecord;
 }
 
 let _getTicketsSearchQuery = (tickets) => {
