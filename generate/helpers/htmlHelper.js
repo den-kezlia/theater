@@ -1,15 +1,39 @@
-const tr = require('transliteration');
-const fs = require('fs');
-const path = require('path');
-const http = require('https');
+let tr = require('transliteration');
+let fs = require('fs');
+let path = require('path');
+let http = require('https');
+let config = require('../../config/config');
 
-const config = require('../../config/config');
+let generatePerformance = (performance) => {
+    let html = _generatePerformanceHTML(performance);
+    let folderName = _generateFolderName(performance.name);
+    let src = path.resolve(__dirname, `../../${config.srcPerformancePath}`);
+    let folderPath = path.resolve(src, folderName);
+    let imagePath = path.resolve(folderPath, 'images');
+    let eventsPath = path.resolve(folderPath, 'events');
+    let foldersToCreate = [src, folderPath, imagePath, eventsPath];
 
-const _generateFolderName = (name) => {
+    performance.events.forEach(event => {
+        let date = new Date(event.date);
+        let folderName = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        foldersToCreate.push(path.resolve(eventsPath, folderName));
+    });
+
+    _generateFolders(foldersToCreate);
+    _generateHTMLFile(folderPath, html);
+    _generateImages(imagePath, performance.image[0]);
+    _generateEvents(performance, eventsPath);
+}
+
+module.exports = {
+    generatePerformance: generatePerformance
+}
+
+let _generateFolderName = (name) => {
     return tr.transliterate(name, config.transliterationOptions).toLocaleLowerCase().split(' ').join('_')
 }
 
-const _generateFolders = (folders) => {
+let _generateFolders = (folders) => {
     folders.map(folder => {
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder);
@@ -17,7 +41,7 @@ const _generateFolders = (folders) => {
     })
 }
 
-const _generateImages = (folder, image) => {
+let _generateImages = (folder, image) => {
     // TODO: implement webp images
     let mainImage = {
         path: path.resolve(folder, 'main.jpg'),
@@ -38,7 +62,7 @@ const _generateImages = (folder, image) => {
     })
 }
 
-const _generateHTMLFile = (folder, html) => {
+let _generateHTMLFile = (folder, html) => {
     let filePath = path.resolve(folder, 'index.html');
 
     fs.writeFileSync(filePath, html, { flag: 'w+' }, function (err) {
@@ -46,54 +70,70 @@ const _generateHTMLFile = (folder, html) => {
     });
 }
 
-const _getPerformanceDates = (events) => {
-    let dates = [];
+let _getPerformanceEvents = (events) => {
+    let eventsFormatted = [];
 
     events.forEach(event => {
-        dates.push(event.date);
+        eventsFormatted.push({
+            id: event.id,
+            date: event.date
+        });
     })
 
-    return dates
+    return eventsFormatted
 }
 
 
-const _getPerformanceEventsHTML = (events) => {
-    let dates = _getPerformanceDates(events);
+let _getPerformanceEventsHTML = (events) => {
+    let eventsFormatted = _getPerformanceEvents(events);
 
-    return dates.map(date => {
-        return `  - date: ${date}\n`
-    })
+    return eventsFormatted.map(event => {
+        let date = new Date(event.date);
+        let dateShort = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        return `  -\n    id: ${event.id}\n    date: ${event.date}\n    dateShort: ${dateShort}\n`
+    }).join('');
 }
 
-const _generatePerformanceHTML = (data) => {
+let _generateEvents = (performance, eventsPath) => {
+    let events = performance.events;
+    let description = _generatePerformanceDescription(performance);
+
+    events.forEach(event => {
+        let date = new Date(event.date);
+        let dateShort = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        let filePath = path.resolve(eventsPath, dateShort, 'index.html');
+        let html = `---
+id: ${event.id}
+date: ${event.date}
+dateShort: ${dateShort}
+${description}
+layout: events/${event.arrangement.split(' ').join('-').toLowerCase()}.liquid
+---`;
+
+        fs.writeFileSync(filePath, html, { flag: 'w+' }, function (err) {
+            if (err) return console.log(err);
+        });
+    });
+}
+
+let _generatePerformanceHTML = (performance) => {
+    let description = _generatePerformanceDescription(performance);
     let html = `---
-title: ${data.name}
-name: ${data.name}
-description: ${data.description}
-address: ${data.address}
-duration: ${data.duration}
+${description}
 events:
-${_getPerformanceEventsHTML(data.events)}
-images:
-    main: images/main.jpg,
-    thumb: images/thumb.jpg
+${_getPerformanceEventsHTML(performance.events)}
 ---`;
 
     return html;
 }
 
-const generatePerformance = (performance) => {
-    let html = _generatePerformanceHTML(performance);
-    let folderName = _generateFolderName(performance.name);
-    let src = path.resolve(__dirname, `../../${config.srcPerformancePath}`);
-    let folderPath = path.resolve(src, folderName);
-    let imagePath = path.resolve(folderPath, 'images');
-
-    _generateFolders([src, folderPath, imagePath]);
-    _generateHTMLFile(folderPath, html);
-    _generateImages(imagePath, performance.image[0]);
-}
-
-module.exports = {
-    generatePerformance: generatePerformance
+let _generatePerformanceDescription = (performance) => {
+    return `title: ${performance.name}
+name: ${performance.name}
+description: ${performance.description}
+address: ${performance.address}
+duration: ${performance.duration}
+images:
+    main: images/main.jpg,
+    thumb: images/thumb.jpg`;
 }

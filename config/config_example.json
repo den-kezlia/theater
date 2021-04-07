@@ -1,4 +1,5 @@
 {
+    "secretKey": "",
     "apiKey": "",
     "apiUrl": "https://api.airtable.com",
     "ID": "",

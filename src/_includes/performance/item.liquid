@@ -1,12 +1,6 @@
 <article class="performance">
     {% include performance/item_card.liquid %}
 
-    <div class="performance__order">
-        <a href="tickets" class="button performance__order__link">
-            Выбрать Билет
-        </a>
-    </div>
-
     <div class="performance__description">
         <p>{{ description }}</p>
 
@@ -14,6 +8,9 @@
             {% for event in events %}
                 <li>
                     <time class="archive__year" datetime="{{ event.date | date: "%d.%m.%Y" }}">{{ event.date | date: "%d.%m.%Y" }}</time>
+                    <a href="events/{{ event.dateShort }}" class="button performance__order__link">
+                        Выбрать Билет
+                    </a>
                 </li>
             {% endfor %}
         </ul>

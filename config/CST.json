@@ -2,7 +2,8 @@
     "TICKET_STATUSES": {
         "FREE": "Free",
         "HOLD": "Hold",
-        "SOLD": "Sold"
+        "SOLD": "Sold",
+        "DISABLED": "Disabled"
     },
     "ORDER_STATUSES": {
         "NEW": "New",

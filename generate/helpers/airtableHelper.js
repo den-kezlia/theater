@@ -1,5 +1,7 @@
-const config = require('../../config/config.json');
-const Airtable = require('airtable');
+let config = require('../../config/config.json');
+let Airtable = require('airtable');
+let Cryptr = require('cryptr');
+let cryptr = new Cryptr(config.secretKey);
 
 Airtable.configure({
     endpointUrl: config.apiUrl,
@@ -21,7 +23,7 @@ async function _parsePerformanceRecords(records) {
             }
 
             if (record.get('Events')) {
-                let events = await _getEvents(record.get('Events').split(','));
+                let events = await _getEvents(record.get('Events').split('|'));
                 performance.events = events;
             }
 
@@ -32,11 +34,11 @@ async function _parsePerformanceRecords(records) {
     return performances;
 }
 
-const _getEvents = (IDs) => {
+let _getEvents = (IDs) => {
     return Promise.all(IDs.map(_getEvent));
 }
 
-const _getEvent = (id) => {
+let _getEvent = (id) => {
     let promise = (resolve, reject) => {
         let eventTable = Airtable.base(id);
 
@@ -45,7 +47,9 @@ const _getEvent = (id) => {
 
             resolve({
                 date: records[0].get('Date'),
-                name: records[0].get('Name')
+                name: records[0].get('Name'),
+                id: cryptr.encrypt(records[0].getId()),
+                arrangement: records[0].get('Arrangement')
             });
         });
     }
@@ -53,7 +57,7 @@ const _getEvent = (id) => {
     return new Promise(promise);
 }
 
-const getPerformances = () => {
+let getPerformances = () => {
     let promise = ((resolve, reject) => {
         let PerformancesTable = Airtable.base(config.ID);
         PerformancesTable('List').select().firstPage(async (err, records) => {
