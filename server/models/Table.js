@@ -1,10 +1,6 @@
-let config = require('../../config/config.json');
 let Airtable = require('airtable');
+let config = require('../../config/config.json');
 const CST = require('../../config/CST.json');
-
-// TODO: resolve issue with table ID
-const TABLE_TICKETS_ID = config.TABLE_TICKETS_ID;
-const TABLE_GUESTS_ID = config.TABLE_GUESTS_ID;
 
 class Table {
     constructor() {
@@ -15,16 +11,16 @@ class Table {
         });
     }
 
-    getRecords(tableID, selectOptions) {
+    getRecords(tableID, tableType, selectOptions) {
         let promise = (resolve, reject) => {
-            let table = this.Airtable.base(TABLE_TICKETS_ID);
+            let table = this.Airtable.base(tableID);
             let options = {};
 
             if (selectOptions) {
                 options = Object.assign(options, selectOptions)
             }
 
-            table(tableID).select(options).firstPage(async (err, records) => {
+            table(tableType).select(options).firstPage(async (err, records) => {
                 if (err) { reject(err); return; }
 
                 resolve(records);
@@ -34,11 +30,11 @@ class Table {
         return new Promise(promise);
     }
 
-    getRecord(tableID, ID) {
+    getRecord(tableID, tableType, RecordID) {
         let promise = (resolve, reject) => {
-            let table = this.Airtable.base(TABLE_TICKETS_ID);
+            let table = this.Airtable.base(tableID);
 
-            table(tableID).find(ID, (err, record) => {
+            table(tableType).find(RecordID, (err, record) => {
                 if (err) { reject(err); return; }
 
                 resolve(record);
@@ -48,11 +44,11 @@ class Table {
         return new Promise(promise);
     }
 
-    updateRecords(tableID, data) {
+    updateRecords(tableID, tableType, data) {
         let promise = (resolve, reject) => {
-            let table = this.Airtable.base(TABLE_TICKETS_ID);
+            let table = this.Airtable.base(tableID);
 
-            table(tableID).update(data, (err, records) => {
+            table(tableType).update(data, (err, records) => {
                 if (err) { reject(err); return; }
 
                 resolve(records);
@@ -62,9 +58,9 @@ class Table {
         return new Promise(promise);
     }
 
-    createOrder(data) {
+    createOrder(tableID, data) {
         let promise = (resolve, reject) => {
-            let SeatsTable = this.Airtable.base(TABLE_TICKETS_ID);
+            let SeatsTable = this.Airtable.base(tableID);
 
             SeatsTable(CST.TABLES.ORDERS).create([
                 {
@@ -85,9 +81,9 @@ class Table {
         return new Promise(promise);
     }
 
-    createGuest(data) {
+    createGuest(tableID, data) {
         let promise = (resolve, reject) => {
-            let SeatsTable = this.Airtable.base(TABLE_TICKETS_ID);
+            let SeatsTable = this.Airtable.base(tableID);
 
             SeatsTable(CST.TABLES.GUESTS).create([
                 {

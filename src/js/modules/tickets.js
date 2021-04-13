@@ -73,6 +73,7 @@ let _initPlaceOrderEvent = () => {
             }
 
             let data = {
+                id: document.getElementById('js-checkout__id').value,
                 guest: {
                     name: nameEl.value,
                     email: emailEl.value,
@@ -87,7 +88,7 @@ let _initPlaceOrderEvent = () => {
                 body: JSON.stringify(data),
                 headers: {
                     'Content-Type': 'application/json'
-                  }
+                }
             }).then(response => {
                 response.json().then(data => {
                     if (data.error) {
@@ -109,8 +110,17 @@ let _initPlaceOrderEvent = () => {
 let _getTickets = () => {
     let promise = (resolve, reject) => {
         try {
-            fetch('http://localhost:1337/api/getTickets')
-                .then(response => {
+            let data = {
+                id: document.getElementById('js-chairs').dataset.id
+            };
+
+            fetch('http://localhost:1337/api/getTickets', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
                     response.json().then(data => {
                         if (data.error) {
                             // TODO: implement error notifications
@@ -134,8 +144,10 @@ let _getTickets = () => {
 let _updateChairStatus = (ticket) => {
     let chairEl = document.querySelectorAll(`[data-position="${ticket.position.row}-${ticket.position.col}"]`)[0];
 
-    chairEl.classList.add(`chair--${ticket.status}`);
-    chairEl.dataset.price = ticket.price;
+    if (chairEl) {
+        chairEl.classList.add(`chair--${ticket.status}`);
+        chairEl.dataset.price = ticket.price;
+    }
 }
 
 let _calculateTickets = () => {

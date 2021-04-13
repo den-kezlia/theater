@@ -9,7 +9,7 @@ scripts: ['tickets.js']
 
         {% include tickets/scene.liquid %}
 
-        <div id="js-chairs" class="chairs">
+        <div id="js-chairs" data-id="{{ id }}" class="chairs">
             <div class="chairs__line chairs__line--1">
                 <div class="chairs__line__left">
                     <button

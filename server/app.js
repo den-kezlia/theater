@@ -2,6 +2,7 @@ let express = require('express');
 let cors = require('cors');
 let helper = require('./helpers/helper');
 let Bot = require('./models/Bot');
+let logger = require('./helpers/logger')('app');
 
 let app = express();
 // TODO: Find solution for cors
@@ -11,18 +12,26 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-app.get('/api/getTickets', async (req, res) => {
+app.post('/api/getTickets', async (req, res) => {
+    logger.info('----- APP Start api/getTickets -----');
     let error = false;
     let message = '';
     let tickets = [];
 
     try {
-        tickets = await helper.getTickets();
+        logger.info('getting tickets');
+        tickets = await helper.getTickets(req.body);
+        logger.info('got tickets');
     } catch (err) {
         error = true;
         message = err.message;
+        logger.log({
+            level: 'error',
+            message: err.message
+        })
     }
 
+    logger.info('----- APP End api/getTickets -----');
     res.json({
         error: error,
         message: message,
@@ -36,13 +45,14 @@ app.post('/api/holdTickets', async (req, res) => {
 
     try {
         let result = await helper.holdTickets(req.body);
-        Bot.sendNewTicketHold(result);
+        await Bot.sendNewTicketHold(result);
         message = result;
     } catch (err) {
         error = true;
         message = err.message;
     }
 
+    // TODO: Remove tableID from response
     res.json({
         error: error,
         message: message

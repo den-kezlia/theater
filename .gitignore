@@ -2,3 +2,4 @@
 node_modules
 _site
 config/config.json
+logs

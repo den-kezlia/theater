@@ -48,7 +48,7 @@ let _getEvent = (id) => {
             resolve({
                 date: records[0].get('Date'),
                 name: records[0].get('Name'),
-                id: cryptr.encrypt(records[0].getId()),
+                id: cryptr.encrypt(id),
                 arrangement: records[0].get('Arrangement')
             });
         });
