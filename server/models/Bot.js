@@ -104,9 +104,15 @@ class Bot {
                     return;
                 }
 
+                let index = 0;
                 for (let orderRecord of orderRecords) {
                     try {
-                        await this._sendOrderCard(id, orderRecord);
+                        index++;
+                        await this._sendOrderCard({
+                            userID: id,
+                            index: index,
+                            amount: orderRecords.length
+                        }, orderRecord);
                     } catch (error) {
                         console.log(error);
                     }
@@ -140,9 +146,15 @@ class Bot {
                     return;
                 }
 
+                let index = 0;
                 for (let orderRecord of orderRecords) {
                     try {
-                        await this._sendOrderCard(id, orderRecord);
+                        index++;
+                        await this._sendOrderCard({
+                            userID: id,
+                            index: index,
+                            amount: orderRecords.length
+                        }, orderRecord);
                     } catch (error) {
                         console.log(error);
                     }
@@ -176,9 +188,15 @@ class Bot {
                     return;
                 }
 
+                let index = 0;
                 for (let orderRecord of orderRecords) {
                     try {
-                        await this._sendOrderCard(id, orderRecord);
+                        index++;
+                        await this._sendOrderCard({
+                            userID: id,
+                            index: index,
+                            amount: orderRecords.length
+                        }, orderRecord);
                     } catch (error) {
                         console.log(error);
                     }
@@ -314,14 +332,15 @@ class Bot {
         }
     }
 
-    async _sendOrderCard (id, orderRecord) {
+    async _sendOrderCard (options, orderRecord) {
         logger.info(`sending order card ${orderRecord} ->`);
 
         let replyMarkup;
-        let orderDetails = await helper.getOrderDetails(ACTIONS[id].tableID, orderRecord);
+        let orderDetails = await helper.getOrderDetails(ACTIONS[options.userID].tableID, orderRecord);
+        let countMsg = `${options.index} / ${options.amount}`;
         let ticketsMsg = helper.formatTicketsMsg(orderDetails.tickets);
         let guestMsg = helper.formatGuestMsg(orderDetails.guest);
-        let message = ticketsMsg + '\n\n' + guestMsg;
+        let message = countMsg + '\n' + ticketsMsg + '\n\n' + guestMsg;
 
         switch (orderDetails.status) {
             case CST.ORDER_STATUSES.NEW:
@@ -360,7 +379,7 @@ class Bot {
                 break;
         }
 
-        this.bot.sendMessage(id, message, { replyMarkup });
+        this.bot.sendMessage(options.userID, message, { replyMarkup });
         logger.info(`<- sent order card ${orderRecord}`);
     }
 
