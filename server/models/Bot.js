@@ -24,7 +24,7 @@ let _getButtons = () => {
             command: '/getInProgressOrders'
         },
         getMineInProgressOrders: {
-            label: 'Мои обработке',
+            label: 'Мои в обработке',
             command: '/getMineInProgressOrders'
         }
     }
@@ -96,7 +96,7 @@ class Bot {
                 return false;
             }
 
-            helper.getActiveOrders(ACTIONS[id].tableID).then(async orderRecords => {
+            helper.getOrders({ type: 'active' }, ACTIONS[id].tableID).then(async orderRecords => {
                 // TODO: show message if no orders
                 if (!orderRecords.length) {
                     this.bot.sendMessage(id, 'Нет еще заказов у этого спектакля. Нужно поднажать');
@@ -112,6 +112,78 @@ class Bot {
                     }
                 }
                 logger.info('----- <- end /getActiveOrders -----');
+            }).catch(error => {
+                console.log(error);
+
+                logger.log({
+                    level: 'error',
+                    message: error
+                })
+            });
+        });
+
+        this.bot.on('/getInProgressOrders', msg => {
+            logger.info('----- on /getInProgressOrders -> -----');
+            let id = msg.from.id;
+
+            if (!ACTIONS[id] || !ACTIONS[id].tableID) {
+                this.bot.sendMessage(id, 'бляя...');
+
+                return false;
+            }
+
+            helper.getOrders({ type: 'inProgress' }, ACTIONS[id].tableID).then(async orderRecords => {
+                // TODO: show message if no orders
+                if (!orderRecords.length) {
+                    this.bot.sendMessage(id, 'Нет еще заказов у этого спектакля. Нужно поднажать');
+
+                    return;
+                }
+
+                for (let orderRecord of orderRecords) {
+                    try {
+                        await this._sendOrderCard(id, orderRecord);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                logger.info('----- <- end /getInProgressOrders -----');
+            }).catch(error => {
+                console.log(error);
+
+                logger.log({
+                    level: 'error',
+                    message: error
+                })
+            });
+        });
+
+        this.bot.on('/getMineInProgressOrders', msg => {
+            logger.info('----- on /getMineInProgressOrders -> -----');
+            let id = msg.from.id;
+
+            if (!ACTIONS[id] || !ACTIONS[id].tableID) {
+                this.bot.sendMessage(id, 'бляя...');
+
+                return false;
+            }
+
+            helper.getOrders({ type: 'mineInProgress', userID: id }, ACTIONS[id].tableID).then(async orderRecords => {
+                // TODO: show message if no orders
+                if (!orderRecords.length) {
+                    this.bot.sendMessage(id, 'Нет еще заказов у этого спектакля. Нужно поднажать');
+
+                    return;
+                }
+
+                for (let orderRecord of orderRecords) {
+                    try {
+                        await this._sendOrderCard(id, orderRecord);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                logger.info('----- <- end /getMineInProgressOrders -----');
             }).catch(error => {
                 console.log(error);
 

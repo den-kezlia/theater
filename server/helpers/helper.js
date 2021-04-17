@@ -95,9 +95,23 @@ let getOrderDetails = async (tableID, order) => {
     };
 }
 
-let getActiveOrders = async (tableID) => {
+let getOrders = async (options, tableID) => {
     let promise = (resolve, reject) => {
-        let query = `OR(Status = "${CST.ORDER_STATUSES.NEW}", Status = "${CST.ORDER_STATUSES.IN_PROGRESS}")`;
+        let query;
+
+        switch (options.type) {
+            case 'active':
+                query = `OR(Status = "${CST.ORDER_STATUSES.NEW}", Status = "${CST.ORDER_STATUSES.IN_PROGRESS}")`;
+                break;
+            case 'inProgress':
+                query = `Status = "${CST.ORDER_STATUSES.IN_PROGRESS}"`;
+                break;
+            case 'mineInProgress':
+                query = `AND(Status = "${CST.ORDER_STATUSES.IN_PROGRESS}", Name = "${options.userID}")`;
+                break;
+            default:
+                break;
+        }
 
         Table.getRecords(tableID, CST.TABLES.ORDERS, { filterByFormula: query }).then(records => {
             resolve(records);
@@ -216,7 +230,7 @@ module.exports = {
     getTickets: getTickets,
     holdTickets: holdTickets,
     getOrderDetails: getOrderDetails,
-    getActiveOrders: getActiveOrders,
+    getOrders: getOrders,
     updateOrderStatus: updateOrderStatus,
     getEvents: getEvents,
     formatTicketsMsg: formatTicketsMsg,
