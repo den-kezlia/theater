@@ -107,7 +107,7 @@ let getOrders = async (options, tableID) => {
                 query = `Status = "${CST.ORDER_STATUSES.IN_PROGRESS}"`;
                 break;
             case 'mineInProgress':
-                query = `AND(Status = "${CST.ORDER_STATUSES.IN_PROGRESS}", Name = "${options.userID}")`;
+                query = `AND(Status = "${CST.ORDER_STATUSES.IN_PROGRESS}", UserID = "${options.userID}")`;
                 break;
             default:
                 break;
@@ -130,7 +130,8 @@ let updateOrderStatus = async (tableID, data, orderStatus) => {
             "id": orderRecord.getId(),
             "fields": {
                 "Status": orderStatus,
-                "Name": `${data.userID}`
+                "UserID": `${data.userID}`,
+                "UserName": `${data.userName}`
             }
         }];
         try {

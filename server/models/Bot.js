@@ -247,16 +247,23 @@ class Bot {
             logger.info('----- on /callbackQuery -> -----');
 
             let id = msg.from.id;
+            let userName = `${msg.from.first_name} ${msg.from.last_name}`;
             let data = JSON.parse(msg.data);
 
             logger.info(`action ${data.action} ->`);
 
             switch (data.action) {
                 case CST.ACTIONS.UPDATE_ORDER:
-                    this.orderAction(id, data);
+                    this.orderAction({
+                        userID: id,
+                        userName: userName
+                    }, data);
                     break;
                 case CST.ACTIONS.SELECT_EVENT:
-                    this.eventAction(id, data);
+                    this.eventAction({
+                        userID: id,
+                        userName: userName
+                    }, data);
                     break;
             }
         });
@@ -264,15 +271,15 @@ class Bot {
         this.bot.start();
     }
 
-    orderAction(id, data) {
+    orderAction(options, data) {
         logger.info(`sending order action cards ->`);
 
         let replyOptions = {};
         let message;
         let status;
 
-        if (!STATE[id] || !STATE[id].tableID) {
-            this.bot.sendMessage(id, 'да бляя...');
+        if (!STATE[options.userID] || !STATE[options.userID].tableID) {
+            this.bot.sendMessage(options.userID, 'да бляя...');
 
             return false;
         }
@@ -295,14 +302,15 @@ class Bot {
         }
 
         logger.info(`getting order data ->`);
-        helper.updateOrderStatus(STATE[id].tableID, {
+        helper.updateOrderStatus(STATE[options.userID].tableID, {
             orderID: data.orderID,
-            userID: id
+            userID: options.userID,
+            userName: options.userName
         }, status).then(updatedOrder => {
             logger.info(`<- got order data ${updatedOrder}`);
 
             logger.info(`sending order action card ${data.orderID} ->`);
-            this.bot.sendMessage(id, message, replyOptions);
+            this.bot.sendMessage(options.userID, message, replyOptions);
             logger.info(`<- sent order action card ${data.orderID}`);
 
             logger.info('----- <- end /callbackQuery -----');
@@ -316,7 +324,7 @@ class Bot {
         });
     }
 
-    eventAction(id, data) {
+    eventAction(options, data) {
         logger.info(`sending event action card ->`);
 
         helper.getEvent(data.tableID).then(eventRecord => {
@@ -336,11 +344,11 @@ class Bot {
                 parseMode: 'markdown'
             };
 
-            STATE[id] = {
+            STATE[options.userID] = {
                 tableID: data.tableID
             }
 
-            this.bot.sendMessage(id, message, replyOptions);
+            this.bot.sendMessage(options.userID, message, replyOptions);
             logger.info('----- <- end /callbackQuery -----');
         });
     }
