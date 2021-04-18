@@ -328,8 +328,8 @@ class Bot {
         logger.info(`sending event action card ->`);
 
         helper.getEvent(data.tableID).then(eventRecord => {
-            let eventMessage = `${eventRecord.get('Name')} - ${eventRecord.get('Date')}`;
-
+            let dateFormatted = helper.formatDate(eventRecord.get('Date'));
+            let eventMessage = `${eventRecord.get('Name')} - ${dateFormatted}`;
             let message = eventMessage + '\n' + 'Выбрать действие:';
             let buttons = _getButtons();
             let replyOptions = {
@@ -439,7 +439,8 @@ class Bot {
                 )})
             ]
         ]);
-        let message = `${options.index} / ${options.amount}\n${event.name} - ${event.date}`;
+        let dateMsg = helper.formatDate(event.date);
+        let message = `${options.index} / ${options.amount}\n${event.name} - ${dateMsg}`;
 
         this.bot.sendMessage(options.userID, message, { replyMarkup });
         logger.info(`<- sent event card - ${event.id}`);

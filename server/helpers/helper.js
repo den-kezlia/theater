@@ -229,6 +229,12 @@ let formatGuestMsg = (guest) => {
     return `Гость:\n${guest.name}. Телефон: ${guest.phone}. Email: ${guest.email}`
 }
 
+let formatDate = (date) => {
+    let dateObj = new Date(date);
+
+    return `${dateObj.getDate()}.${dateObj.getMonth() + 1}.${dateObj.getFullYear()}`;
+}
+
 let decryptID = (id) => {
     return cryptr.decrypt(id);
 }
@@ -243,6 +249,7 @@ module.exports = {
     getEvent: getEvent,
     formatTicketsMsg: formatTicketsMsg,
     formatGuestMsg: formatGuestMsg,
+    formatDate: formatDate,
     decryptID: decryptID
 }
 
