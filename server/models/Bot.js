@@ -4,7 +4,7 @@ let helper = require('../helpers/helper');
 let logger = require('../helpers/logger')('bot');
 const CST = require('../../config/CST.json');
 
-let ACTIONS = {};
+let STATE = {};
 
 // TODO: improve this config
 const ID_LIST = config.TELEGRAM_ID_LIST;
@@ -26,6 +26,10 @@ let _getButtons = () => {
         getMineInProgressOrders: {
             label: 'Мои в обработке',
             command: '/getMineInProgressOrders'
+        },
+        back: {
+            label: '🔙',
+            command: '/back'
         }
     }
 }
@@ -45,7 +49,7 @@ class Bot {
             }
         });
 
-        this.bot.on('/start', msg => {
+        this.bot.on(['/start', '/back'], msg => {
             logger.info('----- on /start -> -----');
 
             let id = msg.from.id;
@@ -69,9 +73,20 @@ class Bot {
 
             logger.info('getting events');
             helper.getEvents().then(async events => {
+                if (!events.length) {
+                    // TODO: send message with no Events
+                    return
+                }
+
+                let index = 0;
                 for (let event of events) {
+                    index++;
                     try {
-                        await this._sendEventCard(id, event);
+                        await this._sendEventCard({
+                            userID: id,
+                            index: index,
+                            amount: events.length
+                        }, event);
                     } catch (error) {
                         console.log(error);
                     }
@@ -90,13 +105,21 @@ class Bot {
             logger.info('----- on /getActiveOrders -> -----');
             let id = msg.from.id;
 
-            if (!ACTIONS[id] || !ACTIONS[id].tableID) {
-                this.bot.sendMessage(id, 'бляя...');
+            if (!STATE[id] || !STATE[id].tableID) {
+                let replyOptions = {
+                    replyMarkup: this.bot.keyboard([
+                        [
+                            buttons.selectPerformance.label
+                        ]
+                    ], { resize: true }),
+                    parseMode: 'markdown'
+                };
+                this.bot.sendMessage(id, 'бляя...', replyOptions);
 
                 return false;
             }
 
-            helper.getOrders({ type: 'active' }, ACTIONS[id].tableID).then(async orderRecords => {
+            helper.getOrders({ type: 'active' }, STATE[id].tableID).then(async orderRecords => {
                 // TODO: show message if no orders
                 if (!orderRecords.length) {
                     this.bot.sendMessage(id, 'Нет еще заказов у этого спектакля. Нужно поднажать');
@@ -132,13 +155,21 @@ class Bot {
             logger.info('----- on /getInProgressOrders -> -----');
             let id = msg.from.id;
 
-            if (!ACTIONS[id] || !ACTIONS[id].tableID) {
-                this.bot.sendMessage(id, 'бляя...');
+            if (!STATE[id] || !STATE[id].tableID) {
+                let replyOptions = {
+                replyMarkup: this.bot.keyboard([
+                    [
+                        buttons.selectPerformance.label
+                    ]
+                ], { resize: true }),
+                parseMode: 'markdown'
+            };
+                this.bot.sendMessage(id, 'бляя...', replyOptions);
 
                 return false;
             }
 
-            helper.getOrders({ type: 'inProgress' }, ACTIONS[id].tableID).then(async orderRecords => {
+            helper.getOrders({ type: 'inProgress' }, STATE[id].tableID).then(async orderRecords => {
                 // TODO: show message if no orders
                 if (!orderRecords.length) {
                     this.bot.sendMessage(id, 'Нет еще заказов у этого спектакля. Нужно поднажать');
@@ -174,13 +205,13 @@ class Bot {
             logger.info('----- on /getMineInProgressOrders -> -----');
             let id = msg.from.id;
 
-            if (!ACTIONS[id] || !ACTIONS[id].tableID) {
+            if (!STATE[id] || !STATE[id].tableID) {
                 this.bot.sendMessage(id, 'бляя...');
 
                 return false;
             }
 
-            helper.getOrders({ type: 'mineInProgress', userID: id }, ACTIONS[id].tableID).then(async orderRecords => {
+            helper.getOrders({ type: 'mineInProgress', userID: id }, STATE[id].tableID).then(async orderRecords => {
                 // TODO: show message if no orders
                 if (!orderRecords.length) {
                     this.bot.sendMessage(id, 'Нет еще заказов у этого спектакля. Нужно поднажать');
@@ -240,7 +271,7 @@ class Bot {
         let message;
         let status;
 
-        if (!ACTIONS[id] || !ACTIONS[id].tableID) {
+        if (!STATE[id] || !STATE[id].tableID) {
             this.bot.sendMessage(id, 'да бляя...');
 
             return false;
@@ -264,7 +295,7 @@ class Bot {
         }
 
         logger.info(`getting order data ->`);
-        helper.updateOrderStatus(ACTIONS[id].tableID, {
+        helper.updateOrderStatus(STATE[id].tableID, {
             orderID: data.orderID,
             userID: id
         }, status).then(updatedOrder => {
@@ -288,25 +319,30 @@ class Bot {
     eventAction(id, data) {
         logger.info(`sending event action card ->`);
 
-        let message = 'Выбрать действие:';
-        let buttons = _getButtons();
-        let replyOptions = {
-            replyMarkup: this.bot.keyboard([
-                [
-                    buttons.getActiveOrders.label,
-                    buttons.getInProgressOrders.label,
-                    buttons.getMineInProgressOrders.label
-                ]
-            ], { resize: true }),
-            parseMode: 'markdown'
-        };
+        helper.getEvent(data.tableID).then(eventRecord => {
+            let eventMessage = `${eventRecord.get('Name')} - ${eventRecord.get('Date')}`;
 
-        ACTIONS[id] = {
-            tableID: data.tableID
-        }
+            let message = eventMessage + '\n' + 'Выбрать действие:';
+            let buttons = _getButtons();
+            let replyOptions = {
+                replyMarkup: this.bot.keyboard([
+                    [
+                        buttons.back.label,
+                        buttons.getActiveOrders.label,
+                        buttons.getInProgressOrders.label,
+                        buttons.getMineInProgressOrders.label
+                    ]
+                ], { resize: true }),
+                parseMode: 'markdown'
+            };
 
-        this.bot.sendMessage(id, message, replyOptions);
-        logger.info('----- <- end /callbackQuery -----');
+            STATE[id] = {
+                tableID: data.tableID
+            }
+
+            this.bot.sendMessage(id, message, replyOptions);
+            logger.info('----- <- end /callbackQuery -----');
+        });
     }
 
     async sendNewTicketHold(data) {
@@ -325,7 +361,7 @@ class Bot {
         ]);
 
         for (let id of ID_LIST) {
-            ACTIONS[id] = {
+            STATE[id] = {
                 tableID: data.tableID
             };
             this.bot.sendMessage(id, message, {replyMarkup});
@@ -336,7 +372,7 @@ class Bot {
         logger.info(`sending order card ${orderRecord} ->`);
 
         let replyMarkup;
-        let orderDetails = await helper.getOrderDetails(ACTIONS[options.userID].tableID, orderRecord);
+        let orderDetails = await helper.getOrderDetails(STATE[options.userID].tableID, orderRecord);
         let countMsg = `${options.index} / ${options.amount}`;
         let ticketsMsg = helper.formatTicketsMsg(orderDetails.tickets);
         let guestMsg = helper.formatGuestMsg(orderDetails.guest);
@@ -359,17 +395,16 @@ class Bot {
             case CST.ORDER_STATUSES.IN_PROGRESS:
                 replyMarkup = this.bot.inlineKeyboard([
                     [
-                        this.bot.inlineButton('Отмена', {
-                            callback: JSON.stringify({
-                                action: CST.ACTIONS.UPDATE_ORDER,
-                                type: CST.ACTION_TYPE.CANCEL,
-                                orderID: orderRecord.getId()
-                        })})
-                    ], [
                         this.bot.inlineButton('Продано', {
                             callback: JSON.stringify({
                                 action: CST.ACTIONS.UPDATE_ORDER,
                                 type: CST.ACTION_TYPE.DONE,
+                                orderID: orderRecord.getId()
+                        })}),
+                        this.bot.inlineButton('Отмена', {
+                            callback: JSON.stringify({
+                                action: CST.ACTIONS.UPDATE_ORDER,
+                                type: CST.ACTION_TYPE.CANCEL,
                                 orderID: orderRecord.getId()
                         })})
                     ]
@@ -383,7 +418,7 @@ class Bot {
         logger.info(`<- sent order card ${orderRecord}`);
     }
 
-    async _sendEventCard (id, event) {
+    async _sendEventCard (options, event) {
         logger.info(`sending event card - ${event.id} ->`);
         let replyMarkup = this.bot.inlineKeyboard([
             [
@@ -395,9 +430,9 @@ class Bot {
                 )})
             ]
         ]);
-        let message = `${event.name} - ${event.date}`;
+        let message = `${options.index} / ${options.amount}\n${event.name} - ${event.date}`;
 
-        this.bot.sendMessage(id, message, { replyMarkup });
+        this.bot.sendMessage(options.userID, message, { replyMarkup });
         logger.info(`<- sent event card - ${event.id}`);
     }
 }

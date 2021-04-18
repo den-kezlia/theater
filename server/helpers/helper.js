@@ -212,6 +212,12 @@ let getEvents = async () => {
     return events;
 }
 
+let getEvent = async (tableID) => {
+    let record = await Table.getRecords(tableID, CST.TABLES.DETAILS);
+
+    return record[0];
+}
+
 let formatTicketsMsg = (tickets) => {
     return tickets.map(ticket => {
         return `Ряд ${ticket.position.row} Место ${ticket.position.col}. Цена ${ticket.price} грн.`;
@@ -233,6 +239,7 @@ module.exports = {
     getOrders: getOrders,
     updateOrderStatus: updateOrderStatus,
     getEvents: getEvents,
+    getEvent: getEvent,
     formatTicketsMsg: formatTicketsMsg,
     formatGuestMsg: formatGuestMsg,
     decryptID: decryptID
