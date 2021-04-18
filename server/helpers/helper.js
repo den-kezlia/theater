@@ -126,15 +126,23 @@ let getOrders = async (options, tableID) => {
 let updateOrderStatus = async (tableID, data, orderStatus) => {
     try {
         let orderRecord = await Table.getRecord(tableID, CST.TABLES.ORDERS, data.orderID);
-        let json = [{
-            "id": orderRecord.getId(),
-            "fields": {
-                "Status": orderStatus,
-                "UserID": `${data.userID}`,
-                "UserName": `${data.userName}`
+
+        if (orderRecord.get('Status') === orderStatus) {
+            return {
+                error: true,
+                message: `Заказ уже в ${orderStatus}. Обработано ${orderRecord.get('UserName')}`
             }
-        }];
+        }
+
         try {
+            let json = [{
+                "id": orderRecord.getId(),
+                "fields": {
+                    "Status": orderStatus,
+                    "UserID": `${data.userID}`,
+                    "UserName": `${data.userName}`
+                }
+            }];
             let updatedOrderRecord = await Table.updateRecords(tableID, CST.TABLES.ORDERS, json);
             let nextTicketStatus;
 
@@ -168,7 +176,10 @@ let updateOrderStatus = async (tableID, data, orderStatus) => {
                 await Table.updateRecords(tableID, CST.TABLES.SEATS, ticketsJSON);
             }
 
-            return updatedOrderRecord[0];
+            return {
+                error: false,
+                updatedOrderRecord: updatedOrderRecord[0]
+            };
         } catch (error) {
             console.log(error)
         }

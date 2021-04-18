@@ -306,14 +306,18 @@ class Bot {
             orderID: data.orderID,
             userID: options.userID,
             userName: options.userName
-        }, status).then(updatedOrder => {
-            logger.info(`<- got order data ${updatedOrder}`);
+        }, status).then(result => {
+            logger.info(`<- got order data ${result}`);
+            if (result.error) {
+                this.bot.sendMessage(options.userID, result.message, replyOptions);
+            } else {
+                logger.info(`sending order action card ${data.orderID} ->`);
+                this.bot.sendMessage(options.userID, message, replyOptions);
+                logger.info(`<- sent order action card ${data.orderID}`);
 
-            logger.info(`sending order action card ${data.orderID} ->`);
-            this.bot.sendMessage(options.userID, message, replyOptions);
-            logger.info(`<- sent order action card ${data.orderID}`);
+                logger.info('----- <- end /callbackQuery -----');
+            }
 
-            logger.info('----- <- end /callbackQuery -----');
         }).catch(error => {
             console.log(error);
 
