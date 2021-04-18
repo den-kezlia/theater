@@ -28,7 +28,7 @@ let _getButtons = () => {
             command: '/getMineInProgressOrders'
         },
         back: {
-            label: '🔙',
+            label: '⬅️ Назад',
             command: '/back'
         }
     }
@@ -382,9 +382,10 @@ class Bot {
         let replyMarkup;
         let orderDetails = await helper.getOrderDetails(STATE[options.userID].tableID, orderRecord);
         let countMsg = `${options.index} / ${options.amount}`;
+        let userMsg = orderRecord.get('UserName') ? `Обрабатывает - ${orderRecord.get('UserName')}\n\n` : '';
         let ticketsMsg = helper.formatTicketsMsg(orderDetails.tickets);
         let guestMsg = helper.formatGuestMsg(orderDetails.guest);
-        let message = countMsg + '\n' + ticketsMsg + '\n\n' + guestMsg;
+        let message = countMsg + '\n' + ticketsMsg + '\n\n' + userMsg + guestMsg;
 
         switch (orderDetails.status) {
             case CST.ORDER_STATUSES.NEW:
